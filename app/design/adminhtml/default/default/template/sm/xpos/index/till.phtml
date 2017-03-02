@@ -1,0 +1,98 @@
+<?php $data_till = $this->loadTill(); ?>
+
+<div id="till_popup" class="popup">
+    <div class="panel_block" id="till-chooser">
+        <h4><?php echo $this->__("Choose till") ?></h4>
+        <ul id="till_list">
+            <?php if (count($data_till) > 0) { ?>
+                <?php foreach ($data_till as $till) {
+                    ?>
+                    <li class="store_id_<?php echo $till->getStoreId();
+                    echo $till->getStoreId() == 0 ? ' admin_till' : ' all_till';
+                    ?>"><a
+                            onclick="setTill('<?php echo $till->getTillId() ?>','<?php echo $till->getTillName(); ?>')"
+                            href="javascript:"><?php echo $till->getTillName() ?></a></li>
+                <?php } ?>
+
+            <?php } else { ?>
+                <li><span class="no-till no-hover"><?php echo $this->__("
+No Tills Are Working") ?></span></li>
+            <?php } ?>
+        </ul>
+    </div>
+</div>
+
+
+<script>
+
+    function show_popup_till() {
+        var isTillEnable = '<?php echo Mage::helper('xpos/configXPOS')->getEnableTill(); ?>';
+
+        if (isTillEnable == '0') {
+            $.jStorage.deleteKey('xpos_till');
+            cashierPopup();
+            return;
+        }
+
+        if ($.jStorage.get('xpos_till', false) == false) {
+
+            var allTillElem = jQuery('.all_till');
+            var adminTillElem = jQuery('.admin_till');
+            var currentClassTillWithStoreAvailable = '.store_id_' + $.jStorage.get('xpos_store').id;
+            window.currentTillWithStoreAvailable = jQuery(currentClassTillWithStoreAvailable);
+            if (window.currentTillWithStoreAvailable.length == 0 && adminTillElem.length == 0) {
+                jQuery('#till_popup').bPopup().close();
+                sweetAlert("Oops...", "Current store not have any till.\n\r Please select another store!", "error");
+//                setTimeout(function () {
+//                    window.location.assign(window.url_add_till)
+//                }, 5000);
+                $.jStorage.deleteKey('xpos_store');
+                show_popup_store();
+            } else {
+                //hide all till element
+                allTillElem.hide();
+                // show current till relation with current store
+                window.currentTillWithStoreAvailable.show();
+            }
+
+            jQuery('#till_popup').bPopup({
+                modalClose: false,
+                escClose: false,
+                opacity: 0.6,
+                speed: 450,
+                transition: 'slideBack',
+                positionStyle: 'fixed' //'fixed' or 'absolute'
+            });
+        } else {
+            if ($.jStorage.get('xpos_till', false) != false) {
+                var elementTilId = jQuery('#till_id');
+                jQuery('#till_name').html($.jStorage.get('xpos_till').till_name);
+                elementTilId.val($.jStorage.get('xpos_till').till_id);
+                order.tillId = elementTilId.val();
+                cashierPopup();
+            }
+        }
+    }
+
+    function setTill(id, name) {
+
+        jQuery('#till_name').html(name);
+        var xpos_till = {
+            till_id: id,
+            till_name: name
+        };
+        $.jStorage.set('xpos_till', xpos_till);
+        jQuery('#till_id').val(id);
+        jQuery('#till_popup').bPopup().close();
+        order.tillId = id;
+        cashierPopup();
+    }
+
+    function xpos_change_till() {
+        transactionMoneyLoaded = false;
+        jQuery('#till_name').html("Default");
+        $.jStorage.deleteKey('xpos_till');
+        show_popup_till();
+    }
+
+</script>

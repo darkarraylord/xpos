@@ -1,0 +1,15 @@
+<?php
+$messages = Mage::getSingleton('adminhtml/session_quote')->getMessages(true);
+if ($messages->getItems()) {
+    ?>
+    <ul>
+        <?php foreach ($messages->getItems() as $message):
+            if ($message->getText()): ?>
+            <li><em onclick="hide_message()"></em><?php echo $message->getText(); ?></li>
+        <?php endif;endforeach; ?>
+    </ul>
+    <script>
+        jQuery('#order-message').fadeIn('slow');
+        jQuery('#order-message').delay(6000).fadeOut('slow');
+    </script>
+<?php } ?>

@@ -1,0 +1,93 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: vjcspy
+ * Date: 6/23/15
+ * Time: 4:54 PM
+ */
+?>
+
+<?php
+/*
+         * ID
+         * Name
+         * Email
+         * Telephone
+         * Country
+         * State
+         * Website
+         * */
+$currentStoreId = $this->getCurrentStoreId();
+$request = Mage::app()->getRequest()->getParams();
+$web = isset($request['website'])?$request['website']:'base';
+$store = isset($request['store'])?$request['store']:'default';
+$linkAjaxLoadListCustomer = Mage::getUrl("adminhtml/xpos/getListCustomer").'?website='.$web.'&store='.$store;
+?>
+<script>
+    function closePopup() {
+        this.parent.closePopup();
+    }
+    function setCustomerId(id, name, email, telephone, country, state, website) {
+
+        if (confirm('Are you sure select customer id = ' + id + '?')) {
+            this.parent.setIdCustomer(id, name, email, telephone, country, state, website);
+            closePopup();
+        }
+
+    }
+    var currentStoreId = '<?php echo $currentStoreId; ?>';
+    var ajaxLinkLoadCustomer = '<?php echo $linkAjaxLoadListCustomer; ?>';
+    //    alert(ajaxLinkLoadCustomer);
+    jQuery(document).ready(function () {
+        jQuery('#example').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": ajaxLinkLoadCustomer
+        });
+        jQuery('#example tbody').on('click', 'tr', function () {
+            var id = jQuery('td', this).eq(0).text();
+//            alert( 'You clicked on '+name+'\'s row' );
+//            closePopup();
+            setCustomerId(jQuery('td', this).eq(0).text(), jQuery('td', this).eq(1).text(), jQuery('td', this).eq(2).text(), jQuery('td', this).eq(3).text(), jQuery('td', this).eq(4).text(), jQuery('td', this).eq(5).text(), jQuery('td', this).eq(6).text());
+        });
+    });
+
+</script>
+
+<table id="example" class="row-border stripe display" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Telephone</th>
+        <th>Country</th>
+        <th>State</th>
+        <th>Website</th>
+    </tr>
+    </thead>
+
+    <!--    <tfoot>-->
+    <!--    <tr>-->
+    <!--        <th>ID</th>-->
+    <!--        <th>Name</th>-->
+    <!--        <th>Email</th>-->
+    <!--        <th>Telephone</th>-->
+    <!--        <th>Country</th>-->
+    <!--        <th>State</th>-->
+    <!--        <th>Website</th>-->
+    <!--    </tr>-->
+    <!--    </tfoot>-->
+
+    <tbody>
+    <!--            <tr>-->
+    <!--                <td>Tiger Nixon</td>-->
+    <!--                <td>System Architect</td>-->
+    <!--                <td>Edinburgh</td>-->
+    <!--                <td>61</td>-->
+    <!--                <td>2011/04/25</td>-->
+    <!--                <td>$320,800</td>-->
+    <!--            </tr>-->
+
+    </tbody>
+</table>

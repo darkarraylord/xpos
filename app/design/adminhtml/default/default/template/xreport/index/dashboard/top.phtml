@@ -1,0 +1,109 @@
+<?php
+/**
+ * Created by IntelliJ IDEA.
+ * User: vjcspy
+ * Date: 10/27/15
+ * Time: 5:12 PM
+ */
+?>
+<?php
+$collection = $this->getCollection();
+$arrayProduct = array();
+foreach ($collection as $p) {
+    $arrayProduct[] = array(
+        'name' => $p->getData('product_name'),
+        'qty' => $p->getData('qty_ordered'),
+        'price' => Mage::helper('xreport')->_formatPrice($p->getData('product_price'))
+    );
+}
+?>
+<script>
+    window.arrayProduct = '<?php echo json_encode($arrayProduct)?>';
+</script>
+<div class="panel panel-default" ng-controller="bestController">
+    <div class="panel-heading">
+        <i class="fa fa-bell fa-fw"></i><label>//bestTitle//</label>
+
+        <div class="pull-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default btn-xs dropdown-toggle"
+                        data-toggle="dropdown">
+                    Measure
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                    <li ng-click="changeMeasure(0)"><a href="">Best Seller</a>
+                    </li>
+                    <li ng-click="changeMeasure('mostView')"><a href="">Most viewed</a>
+                    </li>
+                    <li ng-click="changeMeasure('newCus')"><a href="">Newest customers</a>
+                    <li ng-click="changeMeasure('bestCus')"><a href="">Best customers</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li ng-click="changeMeasure('topSearch')"><a href="">Top Search</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body" ng-init='dataBestSeller = <?php echo json_encode($arrayProduct) ?>'>
+        <!--        <div class="list-group">-->
+        <!--<a href="#" class="list-group-item">
+            <i class="fa fa-comment fa-fw"></i> Best Seller
+                                <span class="pull-right text-muted small"><em>4 minutes ago</em>
+                                </span>
+        </a>
+        <a href="#" class="list-group-item">
+            <i class="fa fa-twitter fa-fw"></i> Most viewed
+                                <span class="pull-right text-muted small"><em>12 minutes ago</em>
+                                </span>
+        </a>
+        <a href="#" class="list-group-item">
+            <i class="fa fa-envelope fa-fw"></i> New Customer
+                                <span class="pull-right text-muted small"><em>27 minutes ago</em>
+                                </span>
+        </a>
+        <a href="#" class="list-group-item">
+            <i class="fa fa-tasks fa-fw"></i> Best Customer
+                                <span class="pull-right text-muted small"><em>43 minutes ago</em>
+                                </span>
+        </a>
+        <a href="#" class="list-group-item">
+            <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                                <span class="pull-right text-muted small"><em>11:32 AM</em>
+                                </span>
+        </a>
+        <a href="#" class="list-group-item">
+            <i class="fa fa-bolt fa-fw"></i> Server Crashed!
+                                <span class="pull-right text-muted small"><em>11:13 AM</em>
+                                </span>
+        </a>
+        <a href="#" class="list-group-item">
+            <i class="fa fa-warning fa-fw"></i> Server Not Responding
+                                <span class="pull-right text-muted small"><em>10:57 AM</em>
+                                </span>
+        </a>
+        <a href="#" class="list-group-item">
+            <i class="fa fa-shopping-cart fa-fw"></i> New Order Placed
+                                <span class="pull-right text-muted small"><em>9:49 AM</em>
+                                </span>
+        </a>
+        <a href="#" class="list-group-item">
+            <i class="fa fa-money fa-fw"></i> Payment Received
+                                <span class="pull-right text-muted small"><em>Yesterday</em>
+                                </span>
+        </a>-->
+
+        <table ng-table-dynamic="bestTableParams with cols"
+               class="table table-condensed table-striped">
+            <tr ng-repeat="row in $data">
+                <td ng-repeat="col in $columns" align="//col.align//">//row[col.field]//</td>
+            </tr>
+        </table>
+        <!--        </div>-->
+        <!-- /.list-group -->
+        <!--        <a href="#" class="btn btn-default btn-block">View All Alerts</a>-->
+    </div>
+    <!-- /.panel-body -->
+</div>

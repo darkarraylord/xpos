@@ -1,0 +1,25 @@
+<?php
+$helper = Mage::helper('xpos/license');
+$warn = $helper->getWarningOrderIn();
+$max = $helper->getMaxOrderAllow();
+$current = $helper->getCurrentOrder();
+?>
+<script type="text/javascript">
+    var d = new Date();
+    var n = d.getDate();
+    if(
+        ((localStorage.getItem('wnt')== undefined) &&
+        (localStorage.getItem('wnt')== null)) ||
+        (localStorage.getItem('wnt')!= n)
+    ){
+        localStorage.setItem('wnt',n)
+        swal({
+            title: "<small>Warning!</small>",
+            text: '<span style="color:#F8BB86">You used <?php echo $current.'/'.$max ?> orders in this month. There are '+'<?php echo $max-$current ?>'+' order(s) remain. <span>',
+            html: true
+        });
+    }
+
+    //]]>
+
+</script>

@@ -1,0 +1,24 @@
+<?php
+/*
+ * @var SM_XPos_Block_Adminhtml_Xpos_Receipt_Store
+ */
+?>
+<div class="store-info" style="text-align: <?php echo $this->getHtmlAlignment(); ?>;">
+    <?php if($this->getHtmlAlignment() == 'center'): ?>
+        <div class="name">
+            <span>****</span>
+            <span><?php echo $this->getStoreName(); ?></span>
+            <span>****</span>
+        </div>
+    <?php else: ?>
+        <div class="name">
+            <span><?php echo $this->getStoreName(); ?></span>
+        </div>
+    <?php endif; ?>
+    <div class="slogan"><?php echo $this->getSlogan(true); ?></div>
+    <div class="contact">
+        <span class="phone"><?php echo $this->getStorePhone(); ?></span>
+        <span class="social"></span>
+    </div>
+    <div class="address"><?php echo $this->getStoreAddress(); ?></div>
+</div>

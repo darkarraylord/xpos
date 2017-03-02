@@ -1,0 +1,20 @@
+<?php
+/*
+ * @var SM_XPos_Block_Adminhtml_XPos_Receipt_Order $this
+ */
+?>
+
+<div class="receipt-info">
+    <div class="container">
+        <div class="customer-info">
+            <span>CUSTOMER</span>
+            <span><strong><?php echo $this->getOrder()->getCustomerName(); ?> # <?php echo $this->getOrder()->getCustomerId(); ?></strong></span>
+        </div>
+        <div class="order">
+            <span>ORDER #</span>
+            <span><strong><?php echo $this->getOrder()->getIncrementId(); ?></strong></span>
+        </div>
+    </div>
+    <?php $this->getChild('date')->setData("order", $this->getOrder()); ?>
+    <?php echo $this->getChildHtml('date', false); ?>
+</div>

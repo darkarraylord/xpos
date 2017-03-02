@@ -1,0 +1,30 @@
+<?php
+/*
+ * @var SM_XPos_Block_Adminhtml_XPos_Receipt_Fore $this
+ */
+    $var = $this->getParentBlock()->_viewVars;
+    $printeGift = $var['printGift'];
+?>
+<div class="footer">
+    <!--<div class="highlight">ITEMS SOLD # 4</div>-->
+    <div class="separate">----------***----------</div>
+    <div><?php
+            if ($printeGift)
+                echo $this->getGiftFore();
+            else
+                echo $this->getForeMessage(); ?></div>
+</div>
+<?php
+if($this->hasCCType()):
+    ?>
+    <div style="/*border-bottom: 1px dashed #000;*/
+    border-top: 1px dashed #000;">
+        <div style="width: 50%;text-align: center">
+            <br/>
+            X___________________________
+            <br/>
+            Customer Signature.
+        </div>
+
+    </div>
+<?php endif ?>

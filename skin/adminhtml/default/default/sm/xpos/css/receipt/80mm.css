@@ -1,0 +1,173 @@
+* {
+    background:none !important;
+    text-align:left !important;
+}
+html {
+    margin:0;
+    padding:0;
+}
+body  {
+    background:#fff !important;
+    font: 12px Arial, sans-serif;
+    font-size:12px;
+    font-family:Arial,sans-serif;
+    padding:0 !important;
+    margin:0 !important;
+}
+
+a {
+    color:#2976c9 !important;
+}
+th,td {
+    color:#333 !important;
+    border-color:#ccc !important;
+    padding: 2px;
+    font-weight: normal;
+}
+
+h1 {
+    text-align:center;
+    text-transform: uppercase;
+}
+
+.wrapper {
+    min-width: 0;
+    width: 380px;
+    overflow: hidden;
+}
+
+.middle {
+    min-height: 0;
+    padding:0;
+}
+
+.entry-edit {
+    margin-bottom: 10px;
+}
+
+.entry-edit td.label {
+    text-align:right !important;
+    padding-right: 10px;
+}
+.entry-edit td.label .summary-collapse {
+    text-align:right !important;
+}
+.form-list td.label {
+    width:auto;
+    padding: 0 !important;
+    vertical-align: middle;
+    width: 80px;
+}
+.form-list td.label label {
+    width:auto;
+}
+
+.form-list td.value {
+
+}
+
+.box-left, .box-right {
+    width: auto;
+    float: left;
+}
+#store_information {
+    margin-bottom: 10px;
+}
+h1.a-center {
+
+}
+/*
+.a-center strong {
+    font-weight: normal !important;
+}
+*/
+td.a-right {
+
+}
+.item-container {
+    width: 99px !important;
+    word-wrap: break-word;
+}
+.item-text {
+
+}
+
+.item-text .sku-text {
+    margin: 3px 0;
+}
+
+.item-text .sku-text .value {
+    font-style:italic;
+}
+
+.price-excl-tax .price {
+    font-weight: normal;
+}
+
+.order-tables td h5.title {
+    font-weight: normal;
+}
+
+.grid tr.headings {
+    background:none;
+}
+.grid table .col {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding-right: 5px;
+    white-space: normal;
+    word-wrap:break-word;
+}
+.grid table .col-lg {
+    width: 120px;
+}
+.grid table .col-md {
+    width: 70px;
+}
+
+.grid table .col-sm {
+    width: 50px;
+}
+
+.grid table, .grid table td, .grid tr.headings th {
+    border: none;
+    font-size:1em !important;
+}
+
+.grid th, .grid td {
+    padding: 2px 0;
+}
+
+.grid .no_col {
+    display: none;
+}
+
+.grid table, .grid table td:not(:nth-child(2)), .grid tr.headings th:not(:nth-child(2)) {
+    /*padding: 0px 6px;*/
+}
+
+.grid table, .grid table td:first-child, .grid tr.headings th:first-child {
+    padding: 0px 0px;
+}
+
+.footer {
+    background: none;
+}
+
+/*
+* print styles
+* inlined to avoid required HTTP connection www.phpied.com/delay-loading-your-print-css/
+*/
+@media print {
+    * {color: #000 !important; text-shadow: none !important; line-height: 1; }
+    a, a:visited { color: #000 !important; text-decoration: underline; }
+    a:after { content: " (" attr(href) ")"; }
+    abbr:after { content: " (" attr(title) ")"; }
+    pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
+    thead { display: table-header-group; } /* css-discuss.incutio.com/wiki/Printing_Tables */
+    tr, img { page-break-inside: avoid; }
+    @page { margin: 0cm; }
+    p, h2, h3 { orphans: 3; widows: 3; }
+    h2, h3{ page-break-after: avoid; }
+    /*body {font-family: "MS Gothic" !important;}*/
+}

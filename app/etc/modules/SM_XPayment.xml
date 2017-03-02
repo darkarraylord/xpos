@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <SM_XPayment>
+      <active>true</active>
+      <codePool>local</codePool>
+      <version>1.3.0</version>
+    </SM_XPayment>
+  </modules>
+</config>

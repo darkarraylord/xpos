@@ -1,0 +1,148 @@
+<meta http-equiv="Content-Type" content="<?php echo $this->getContentType() ?>"/>
+<!--<meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" name="viewport">-->
+<meta name="HandheldFriendly" content="true">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+
+<!--<title><?php /*echo htmlspecialchars(html_entity_decode($this->getTitle())) */ ?></title>-->
+<title>X-POS</title>
+<link rel="icon" href="<?php echo $this->getSkinUrl('favicon.ico') ?>" type="image/x-icon"/>
+<link rel="shortcut icon" href="<?php echo $this->getSkinUrl('favicon.ico') ?>" type="image/x-icon"/>
+
+<?php echo $this->getCssJsHtml() ?>
+<?php echo $this->helper('core/js')->getTranslatorScript() ?>
+<?php echo $this->getChildHtml('calendar'); ?>
+<?php echo $this->getChildHtml('optional_zip_countries'); ?>
+<script type="text/javascript">
+    var customer_label = '<?php echo $this->helper('xpos')->__('CUSTOMER') ?>';
+    var price_label = '<?php echo $this->helper('xpos')->__('Price') ?>';
+    var phone_label = '<?php echo $this->helper('xpos')->__('CUSTOMER') ?>';
+    var order_label = '<?php echo $this->helper('xpos')->__('ORDER') ?>';
+    var tax_label = '<?php echo $this->helper('xpos')->__('TAX') ?>';
+    var taxes_label = '<?php echo $this->helper('xpos')->__('TAXES') ?>';
+    var discount_label = '<?php echo $this->helper('sales')->__('Discount') ?>';
+    var subtotal_label = '<?php echo $this->helper('sales')->__('Subtotal') ?>';
+    var item_label = '<?php echo $this->helper('xpos')->__('ITEM') ?>';
+    var total_label = '<?php echo $this->helper('xpos')->__('TOTAL') ?>';
+    var total_paid_label = '<?php echo $this->helper('xpos')->__('TOTAL PAID') ?>';
+    var qty_label = '<?php echo $this->helper('xpos')->__('QUANTITY') ?>';
+
+    var BLANK_URL = '<?php echo $this->getJsUrl() ?>blank.html';
+    var BLANK_IMG = '<?php echo $this->getJsUrl() ?>spacer.gif';
+    var BASE_URL = '<?php echo $this->getUrl('*', array('_nosid' => true)) ?>';
+    var SKIN_URL = '<?php echo $this->getSkinUrl() ?>';
+    var FORM_KEY = '<?php echo $this->getFormKey() ?>';
+    var MEDIA_URL = '<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA) ?>';
+    window.url_image_loading_mask = '<?php echo $this->getSkinUrl('sm/xpos/images/ajax-loader-tr.gif') ?>';
+    window.url_offline_order = '<?php echo $this->getUrl('adminhtml/xpos/completeoffline') ?>';
+    window.url_save_offline_order = '<?php echo $this->getUrl('adminhtml/xpos/saveDataOfflineOrder') ?>';
+    window.url_add_till = '<?php echo $this->getUrl('adminhtml/till/index') ?>';
+    window.autoSyncOrder = '';
+    window.BASE_URL = '<?php echo $this->getUrl('*', array('_nosid' => true)) ?>';
+    window.enableOffline = '<?php echo Mage::helper('xpos/configXPOS')->getOfflineMode() ?>';
+    window.priceIncludesTax = '<?php echo Mage::helper('xpos/configXPOS')->getPriceIncludesTax() ?>';
+    window.apply_tax_after_discount = '<?php echo Mage::helper('xpos/configXPOS')->getCalculationTax() ?>';
+    window.apply_discount_on_price = '<?php echo Mage::helper('xpos/configXPOS')->getApplyDiscountOn() ?>';
+    window.cartSubtotalDisplay = '<?php echo Mage::helper('xpos/configXPOS')->getDisplaySubtotal() ?>';
+    window.filterProducts = '<?php echo Mage::helper('xpos/configXPOS')->getSearchingProductVisibilityFilter() ?>';
+    var countAllProductsUrl = '<?php echo Mage::helper("adminhtml")->getUrl("adminhtml/xposproduct/countAll", array('_nosid' => true)); ?>';
+
+    var loadProductUrl = '<?php echo Mage::helper("adminhtml")->getUrl("adminhtml/xposproduct/load", array('_nosid' => true)); ?>';
+    var xPosCheckProductUrl = '<?php echo Mage::helper("adminhtml")->getUrl("adminhtml/xposproduct/checkNew", array('_nosid' => true)); ?>';
+    var xPosCheckRealTimeUrl = '<?php echo Mage::helper("adminhtml")->getUrl("adminhtml/xposproduct/checkRealTimeProduct", array('_nosid' => true)); ?>';
+    var searchProductUrl = '<?php echo Mage::helper("adminhtml")->getUrl("adminhtml/xposproduct/search", array('_nosid' => true)); ?>';
+    var placeholder = '<img src = "<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN) . "frontend/base/default/images/catalog/product/placeholder/small_image.jpg"; ?>">';
+    var flag_reload_page = 0;
+    var productData = {};
+    var origProductData = {};
+    var categoryData = {};
+    var currentOrder = {};
+    var offlineSearch =
+    <?php echo Mage::helper('xpos/configXPOS')->getOfflineSearch() ?> ==
+    1;
+    var offlineSearch_customer =
+    <?php echo Mage::helper('xpos/configXPOS')->getOfflineSearchCustomer() ?> ==
+    1;
+
+    window.ON_FLY_DISCOUNT =
+    <?php echo Mage::helper('xpos/configXPOS')->getOnlfyDiscount(); ?> ==
+    1;
+
+    window.PRICE_FORMAT = <?php echo Mage::helper('core')->jsonEncode(Mage::app()->getLocale()->getJsPriceFormat()) ?>;
+    window.INCLUDE_TAX = <?php echo Mage::getStoreConfig('tax/calculation/price_includes_tax'); ?>;
+
+    window.CATALOG_PRICE_DISPLAY_TYPE = <?php echo Mage::getStoreConfig('tax/display/type') ?>;
+    window.SHOPPING_CART_PRICE_DISPLAY_TYPE = <?php echo Mage::getStoreConfig('tax/cart_display/price') ?>;
+    window.SHOPPING_CART_SUBTOTAL_DISPLAY_TYPE = <?php echo Mage::getStoreConfig('tax/cart_display/subtotal') ?>;
+    window.SHOPPING_CART_GRANDTOTAL_DISPLAY_TYPE = <?php echo Mage::getStoreConfig('tax/cart_display/grandtotal') ?>;
+    window.ultraBootLoad = '<?php echo Mage::getModel('xpos/iayz')->ultraBootLoad() == true ? '1': '0';?>';
+    /*
+     * SHOULD be deprecated
+     */
+    var onFlyDiscount = <?php echo (Mage::helper('xpos/configXPOS')->getOnlfyDiscount() == 1? 'true':'false'); ?>;
+    var displayTaxInCatalog = <?php echo (Mage::getStoreConfig('tax/display/type')==2 ? 'true':'false'); ?>;
+    var displayTaxInShoppingCart = <?php echo (Mage::getStoreConfig('tax/cart_display/price')==2?'true':'false'); ?>;
+    var displayTaxInSubtotal = <?php echo (Mage::getStoreConfig('tax/cart_display/subtotal')==2?'true':'false'); ?>;
+    var displayTaxInGrandTotal = <?php echo (Mage::getStoreConfig('tax/cart_display/grandtotal')==1?'true':'false'); ?>;
+    var optionsPrice = new Product.OptionsPrice([]);
+    var paymentDiscount = <?php echo (Mage::getStoreConfig('xpayment/xpayment_discount/active')==1?'true':'false'); ?>;
+
+    var manageStock = <?php echo Mage::helper('xpos/configXPOS')->getSearchingInStock(); ?>;
+
+    /*Integrate with Magestore Rewardpoint*/
+    window.isIntegrateRP = '<?php echo Mage::getModel('xpos/integrate')->isIntegrateRp() == true ? '1': '0'; ?>';
+    window.isIntegrateWebtexGiftCard = '<?php echo Mage::getModel('xpos/integrate')->isIntegrateWithWebtexGiftCard() == true ? '1': '0'; ?>';
+    window.isIntegrateGiftVoucher = '<?php echo Mage::getModel('xpos/integrate')->isIntegrateWithGiftVoucher() == true ? '1': '0'; ?>';
+    window.isIntegrateRackRp = '<?php echo Mage::getModel('xpos/integrate')->isIntegrateRackRp() == true ? '1': '0'; ?>';
+    window.isIntegrateMageWorldRp = '<?php echo Mage::getModel('xpos/integrate')->isIntegrateMageWorldRp() == true ? '1': '0'; ?>';
+
+
+    window.CustomSalesProductId = "<?php echo Mage::helper('xpos/customSalesHelper')->getCustomSalesId();  ?>";
+
+    /*TODO: Integrate with webtex giftRegistry*/
+    window.urlGetItemsGiftRegistry = '<?php echo Mage::helper("adminhtml")->getUrl("adminhtml/xposproduct/getProductByGiftRegistryId", array('_nosid' => true)); ?>';
+    window.isSearchRegistry = false;
+    (function (proxied) {
+        window.alertOutOfStock = function (message) {
+            // do something here
+            sweetAlert({
+                title: "<small>Out of stock!</small>!",
+                text: '<span style="color:#F8BB86">' + message + "<span>",
+                html: true
+            });
+//            return proxied.apply(this, arguments);
+        };
+    })(window.alertOutOfStock);
+    (function (proxied) {
+        window.alert = function (message) {
+            // do something here
+            sweetAlert("", message, "info");
+        };
+    })(window.alert);
+    (function (proxied) {
+        window.alertConfirm = function (message,data) {
+            // do something here
+            swal({
+                    title: "Are you sure?",
+                    text: message,
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, delete it!",
+                    closeOnConfirm: false },
+                function(){
+                    var rows = data.rows('.selected').data();
+                    cancelOfflineOrders(rows, data);
+                    swal("Deleted!", "Order have been deleted.", "success");
+                }
+            );
+        };
+    })(window.alertConfirm);
+    window.allowGuestCheckout = <?php echo Mage::helper('xpos/configXPOS')->getEnableGuestCheckout() ?>?1:0;;
+    window.checkCustomerUrl = '<?php echo Mage::helper("adminhtml")->getUrl("adminhtml/xpos/checkCustomer"); ?>';
+    window.configUrl = '<?php echo Mage::helper("adminhtml")->getUrl("adminhtml/system_config/edit/section/xpos"); ?>';
+    window.enableCustomSale = '<?php echo Mage::helper('xpos/configXPOS')->getCustomSalesEnable(); ?>';
+    window.searchCustomSale = '<?php echo SM_XPos_Helper_CustomSalesHelper::CUSTOM_SALES_PRODUCT_QUERY_SEARCH; ?>';
+</script>

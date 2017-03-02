@@ -1,0 +1,195 @@
+<?php
+/**
+ * Created by IntelliJ IDEA.
+ * User: vjcspy
+ * Date: 10/20/15
+ * Time: 3:57 PM
+ */
+?>
+<div class="se-pre-con"></div>
+<div id="wrapper" ng-app="dashboard" ng-controller="dashboardController">
+
+    <?php echo $this->getChildHtml('navigation'); ?>
+
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Dashboard</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-primarya panel-info">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-comments fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"
+                                     style="font-size: 20px"><?php echo $this->getNumOfOrderInday(); ?></div>
+                                <div>New Order</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="<?php echo Mage::helper("adminhtml")->getUrl("xreport/sales/viewHistory", array('_nosid' => true)); ?>">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-greena panel-info">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-tasks fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"
+                                     style="font-size: 20px"><?php echo $this->getQualityProductInday() ?></div>
+                                <div>Product Sales</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="<?php echo Mage::helper("adminhtml")->getUrl("xreport/sales/viewDetail", array('_nosid' => true)); ?>">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-yellowa panel-info">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-shopping-cart fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge" style="font-size: 20px"><?php echo $this->getSalesInday(); ?></div>
+                                <div>Revenue</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="<?php echo Mage::helper("adminhtml")->getUrl("xreport/sales/viewHistory", array('_nosid' => true)); ?>">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-reda panel-info">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-support fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"
+                                     style="font-size: 20px"><?php echo $this->getAverageSalesInday(); ?></div>
+                                <div>Average Orders</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="<?php echo Mage::helper("adminhtml")->getUrl("xreport/sales/viewDetail", array('_nosid' => true)); ?>">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-8">
+                <?php echo $this->getChildHtml('sales_overview'); ?>
+                <!-- /.panel -->
+                <?php echo $this->getChildHtml('quantity_overview'); ?>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-8 -->
+            <div class="col-lg-4">
+                <?php echo $this->getChildHtml('dashboad_top'); ?>
+                <!-- /.panel -->
+                <div class="panel panel-default" ng-init='dataStock = <?php echo $this->getDataStock() ?>'>
+                    <div class="panel-heading">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> In/Out Stock
+                    </div>
+                    <div class="panel-body">
+                        <!--                        <div id="morris-donut-chart"></div>-->
+                        <canvas id="doughnut" class="chart chart-doughnut"
+                                chart-data="dataStock" chart-labels="labelsStock" chart-colours="colorStock" chart-legend="true">
+                        </canvas>
+                        <a href="<?php echo Mage::helper("adminhtml")->getUrl("xreport/sales/viewInventory", array('_nosid' => true)); ?>" class="btn btn-default btn-block">View Details</a>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-4 -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /#page-wrapper -->
+</div>
+<script>
+    $(window).load(function () {
+        // Animate loader off screen
+        hideLoad();
+    });
+    function showLoad() {
+        $(".se-pre-con").show();
+    }
+    function hideLoad() {
+        $(".se-pre-con").fadeOut("slow");
+    }
+    $(document).ready(function () {
+        $('.na_xreport').removeClass('active');
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+
+        //nav-bar
+        jQuery('.toggle-nav').click(function () {
+            if (jQuery('.sidebar ul').is(":visible") === true) {
+                jQuery('#page-wrapper').css({
+                    'margin-left': '0px'
+                });
+                jQuery('.sidebar').removeClass('animated fadeInLeft').css({
+                    'margin-left': '-250px'
+                });
+                jQuery('.sidebar ul').hide();
+                jQuery("#container").addClass("sidebar-closed");
+            } else {
+                jQuery('#page-wrapper').css({
+                    'margin-left': '250px'
+                });
+                jQuery('.sidebar ul').show();
+                jQuery('.sidebar').addClass('animated fadeInLeft').css({
+                    'margin-left': '0'
+                });
+                jQuery("#container").removeClass("sidebar-closed");
+            }
+        });
+        jQuery('.toggle-nav').click();
+        //$("html").niceScroll({styler:"fb",cursorcolor:"#000"});
+    });
+
+</script>

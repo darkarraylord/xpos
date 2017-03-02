@@ -1,0 +1,130 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+<!--<title><?php /*echo htmlspecialchars(html_entity_decode($this->getTitle())) */ ?></title>-->
+<title>X-Report</title>
+<link rel="icon" href="<?php echo $this->getSkinUrl('favicon.ico') ?>" type="image/x-icon"/>
+<link rel="shortcut icon" href="<?php echo $this->getSkinUrl('favicon.ico') ?>" type="image/x-icon"/>
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<meta http-equiv="Content-Type" content="<?php echo $this->getContentType() ?>"/>
+<!--<meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" name="viewport">-->
+<!--<meta name="HandheldFriendly" content="true">-->
+<!--<meta name="apple-mobile-web-app-capable" content="yes"/>-->
+<!--<meta name="apple-mobile-web-app-status-bar-style" content="black"/>-->
+<!--<title><?php /*echo htmlspecialchars(html_entity_decode($this->getTitle())) */ ?></title>-->
+
+<?php echo $this->getCssJsHtml() ?>
+<?php //echo $this->helper('core/js')->getTranslatorScript() ?>
+<?php echo $this->getChildHtml('calendar'); ?>
+<?php echo $this->getChildHtml('optional_zip_countries'); ?>
+<script type="text/javascript">
+    var BLANK_URL = '<?php echo $this->getJsUrl() ?>blank.html';
+    var BLANK_IMG = '<?php echo $this->getJsUrl() ?>spacer.gif';
+    var BASE_URL = '<?php echo $this->getUrl('*', array('_nosid' => true)) ?>';
+    var SKIN_URL = '<?php echo $this->getSkinUrl() ?>';
+    var FORM_KEY = '<?php echo $this->getFormKey() ?>';
+    var MEDIA_URL = '<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA) ?>';
+    window.preLoader = '<?php echo "http://xman.dev/skin/adminhtml/default/default/sm/"."Preloader_3"?>';
+
+    //    var n = SKIN_URL.indexOf("adminhtml");
+    //    window.urlViewController = SKIN_URL.substring(0, n) + "adminhtml/default/default/sm/xpos/images/rsz_2logo.png";
+    window.urlViewController = '<?php echo Mage::helper("adminhtml")->getUrl("xreport/view/postDataChart", array('_nosid' => true)); ?>';
+    window.urlMostViewController = '<?php echo Mage::helper("adminhtml")->getUrl("xreport/view/getMostView", array('_nosid' => true)); ?>';
+    window.urlNewCustomerController = '<?php echo Mage::helper("adminhtml")->getUrl("xreport/view/getCustomersNewest", array('_nosid' => true)); ?>';
+    window.urlBestCustomerController = '<?php echo Mage::helper("adminhtml")->getUrl("xreport/view/getBestCustomer", array('_nosid' => true)); ?>';
+    window.urlTopSearchController = '<?php echo Mage::helper("adminhtml")->getUrl("xreport/view/getTopSearch", array('_nosid' => true)); ?>';
+
+    window.urlSwitchStore = '<?php echo Mage::helper("adminhtml")->getUrl("xreport/xMain/switchStore", array('_nosid' => true)); ?>';
+    window.urlSalesHistoryDataTable = '<?php echo Mage::helper("adminhtml")->getUrl("xreport/sales/getDataCollection", array('_nosid' => true)); ?>';
+    window.urlSalesDetailDataTable = '<?php echo Mage::helper("adminhtml")->getUrl("xreport/sales/getDataSalesDetailCollection", array('_nosid' => true)); ?>';
+    window.urlInventoryDataTable = '<?php echo Mage::helper("adminhtml")->getUrl("xreport/sales/getDataInventoryCollection", array('_nosid' => true)); ?>';
+
+</script>
+<style>
+    .se-pre-con {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background: url(<?php echo "http://xman.dev/skin/adminhtml/default/default/sm/xreport/images/Preloader_1.gif" ?>) center no-repeat #fff;
+    }
+
+    #salesHistoryTable_processing {
+        min-height: 100%;
+        min-width: 100%;
+        top: 22px;
+        margin-top: -25px;
+        padding-bottom: 20px;
+        padding-top: 20px;
+        position: absolute;
+        text-align: center;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background: url(<?php echo "http://xman.dev/skin/adminhtml/default/default/sm/xreport/images/Preloader_1.gif" ?>) center no-repeat #fff;
+        opacity: 0.7;
+        filter: alpha(opacity=70);
+    }
+
+    .goto-top {
+        background: #428bca none repeat scroll 0 0;
+        border-radius: 48px;
+        bottom: 26px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 20px;
+        height: 48px;
+        line-height: 48px;
+        opacity: 0.8;
+        position: fixed;
+        right: 2px;
+        text-align: center;
+        width: 48px;
+        z-index: 1001;
+    }
+</style>
+<script type="text/javascript">
+    function iLog(name, value, levels) {
+        var isLog = 1;
+        var color = 'green';
+        var prefixName = '';
+        switch (levels) {
+            case 1:
+                /*notice*/
+                color = 'green';
+                prefixName = '>';
+                break;
+            case 2:
+                /*major*/
+                prefixName = '??';
+                color = 'blue';
+                break;
+            case 5:
+                /*error*/
+                prefixName = '!!!!!';
+                color = 'red';
+                break;
+            default :
+                color = 'green';
+                prefixName = '>';
+                break;
+        }
+        name = prefixName + ' ' + name;
+        if (isLog == 1 || isLog == '1') {
+            if (typeof value == 'undefined' || value == null) {
+                console.log('%c ' + name, 'color: ' + color + '; font-weight: bold;');
+            } else {
+                console.log('%c ' + name + '=' + value, 'color: ' + color + '; font-weight: bold;');
+            }
+        }
+    }
+</script>

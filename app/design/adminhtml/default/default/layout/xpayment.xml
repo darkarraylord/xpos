@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+  <xpayment_adminhtml_xpaymentbackend_index>
+	  <reference name="content">
+		  <block type="xpayment/adminhtml_xpaymentbackend" name="xpaymentbackend"
+				 template="xpayment/xpaymentbackend.phtml"/>
+	  </reference>
+  </xpayment_adminhtml_xpaymentbackend_index>
+  <xpayment_adminhtml_xpayment_index>
+	  <reference name="content">
+		  <block type="xpayment/adminhtml_xpayment" name="xpayment"/>
+	  </reference>
+  </xpayment_adminhtml_xpayment_index>
+</layout>

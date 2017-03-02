@@ -1,0 +1,746 @@
+<div class="creat-customer">
+    <h2 class="title active"><?php echo $this->__('Create customer'); ?></h2>
+
+    <div class="content">
+        <ul class="list-item no-hover">
+            <li>
+                <label><?php echo $this->__('First Name'); ?>:</label>
+                <input type="text" id="order_customer_firstname" onfocus="active_search_customer()"/>
+            </li>
+            <li>
+                <label><?php echo $this->__('Last Name'); ?>:</label>
+                <input type="text" id="order_customer_lastname" onfocus="active_search_customer()"/>
+            </li>
+            <li>
+                <label><?php echo $this->__('Email'); ?>:</label>
+                <input type="email" id="order_customer_email" name="order[account][email_temp]"
+                       onfocus="active_search_customer()"/>
+            </li>
+            <div class="newsletter" style="margin-left: 128px;margin-top: 7px;">
+                <input type="checkbox" id="order_customer_newsletter" name="order[account][newsletter]"
+                       onfocus="active_search_customer()"/>
+                <label class="btn-subscribe"><?php echo $this->__('Sign Up for Newsletter'); ?></label>
+            </div>
+        </ul>
+        <div class="action">
+            <button type="button" id="" onclick="come_back_guest()"><?php echo $this->__('Cancel'); ?></button>
+            <button type="button" id="" onclick="change_new_customer()"><?php echo $this->__('Save'); ?></button>
+        </div>
+    </div>
+</div>
+<div class="search-customer">
+    <div class="search">
+        <label><?php echo $this->__('Search customer'); ?></label>
+        <input type="text" id="customer_search_field" onfocus="active_search_customer()"/>
+    </div>
+    <div class="result" id="customer_search_autocomplete" style="height: 218px;display: none"></div>
+    <input id="order_customer_id" type="hidden" name="order[customer_id]" value="false"/>
+    <input id="order_account_email" type="hidden" name="customer_email" value=""/>
+</div>
+<?php if (Mage::getModel('xpos/integrate')->isIntegrateWebtexGiftRegistry()) { ?>
+    <div class="search-customer search-registry">
+        <div class="search registry_search">
+            <label><?php echo $this->__('Search Registry'); ?></label>
+            <input type="text" id="registry_search_field" onfocus="active_search_registry()"/>
+        </div>
+        <div class="result" id="registry_search_autocomplete" style="display: none"></div>
+    </div>
+<?php } ?>
+<script>
+
+    jQuery(document).ready(function () {
+        jQuery('#emailreceipt').val('');
+        <?php if (Mage::helper('xpos/configXPOS')->getOfflineSearchCustomer()
+            &&  Mage::helper('xpos/configXPOS')->getCustPerRequest()>0){ ?>
+
+        initSelectCust();
+        updateCustomersLoadedStatus(false);
+        varienGlobalEvents.attachEventHandler('xPos_loaded_product_data', function () {
+            varienGlobalEvents.removeEventHandler('xPos_loaded_product_data', this.method);
+            setStatusXposWorking(' | >>Loading customer ');
+            storeCust();
+        });
+
+        <?php }else{ ?>
+        initOnlineSearchCustomer();
+        <?php } ?>
+        initScroll("#customer_search_autocomplete");
+        initScroll("#billing-order-shipping_address_fields");
+        initScroll("#order-shipping_address_fields");
+    });
+
+    function active_search_customer() {
+        jQuery('.search-customer .search').addClass('active');
+        jQuery('.creat-customer .h2').removeClass('active');
+        jQuery('.search-registry .registry_search').removeClass('active');
+    }
+    function active_search_registry() {
+        jQuery('.creat-customer .h2').removeClass('active');
+        jQuery('.search-customer .search').removeClass('active');
+        jQuery('.search-registry .registry_search').addClass('active');
+    }
+
+    function active_create_customer() {
+        jQuery('.creat-customer .h2').addClass('active');
+        jQuery('.search-customer .search').removeClass('active');
+    }
+
+    function come_back_guest() {
+        jQuery("#customer_search_field").val('');
+        jQuery("#customer_options").removeClass('delete-customer');
+        jQuery("#customer_options").addClass('search-customer');
+        jQuery("#customer_options").attr('onclick', 'show_customer_search()');
+        getCustomerDefault(document.getElementById('change_customer_guest'));
+        jQuery("#customer_options").removeClass('active');
+        jQuery(".list-customer").addClass('disabled');
+        jQuery("#customer_area").hide();
+        jQuery("#customer_search").hide();
+        if (isOnline()) {
+            order.itemsUpdate();
+        } else {
+            /*
+             TODO: XPOS-2261
+             */
+            if (jQuery('#customer_options').hasClass('search-customer')) {
+                jQuery('#customer_options').addClass('disabled');
+            }
+        }
+    }
+
+    function comeBackToDefaultCustomer() {
+        jQuery("#customer_type").val('guest');
+        clearFormRegister();
+        jQuery("#order_customer_id").val(false);
+        order.customerId = false;
+        jQuery("#customer_search_field").val('');
+        jQuery('#emailreceipt').val('');
+        jQuery("#customer_name").html('<?php echo Mage::getStoreConfig('xpos/guest/guest_name') ?>');
+        jQuery("#customer_options").removeClass('delete-customer');
+        jQuery("#customer_options").addClass('search-customer');
+        jQuery("#customer_options").attr('onclick', 'show_customer_search()');
+        setAdd(defaultAddress, false);
+        jQuery("#customer_options").removeClass('active');
+        jQuery(".list-customer").addClass('disabled');
+        jQuery("#customer_area").hide();
+        jQuery("#customer_search").hide();
+        if (isOnline()) {
+            order.itemsUpdate();
+        }
+    }
+
+    function IsEmail(email) {
+        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        return regex.test(email);
+    }
+
+
+    function change_new_customer() {
+
+        jQuery("#customer_type").val('new');
+        var firstname = jQuery("#order_customer_firstname").val();
+        var lastname = jQuery("#order_customer_lastname").val();
+        var email = jQuery("#order_customer_email").val();
+
+        if(jQuery('#order_customer_newsletter').is(':checked')==true){
+            var newsletter = 1;
+        }else{
+            var newsletter = 0;
+        }
+        if (email == '' && firstname == '' && lastname == '') {
+            alert('Please input all required fields');
+            return;
+        }else{
+            if (firstname == '') {
+                alert('Please enter firstname');
+                return;
+            }
+            if (lastname == '') {
+                alert('Please enter lastname');
+                return;
+            }
+            if (email == '') {
+                alert('Please enter email');
+                return;
+            }
+            if (!IsEmail(email)) {
+                alert('Please enter a valid email address');
+                return;
+            }
+        }
+        jQuery("#order-billing_address_address_firstname").val(firstname);
+        jQuery("#order-shipping_address_address_firstname").val(firstname);
+        jQuery("#order-billing_address_address_lastname").val(lastname);
+        jQuery("#order-shipping_address_address_lastname").val(lastname);
+        jQuery("#customer_name").html(firstname + ' ' + lastname);
+
+        jQuery("#customer_options").removeClass('search-customer');
+        jQuery("#customer_options").addClass('delete-customer');
+
+        jQuery("#customer_options").attr('onclick', 'come_back_guest()');
+
+        enableBilling(jQuery("#order-billing_same_as_billing"));
+        jQuery("#customer_search").hide();
+        jQuery('#emailreceipt').val(email);
+        jQuery('#cus_email_temp').val(email);
+        //jQuery("#customer_area").show();
+        var shipping_street = jQuery('#order-shipping_address_address_street0').val();
+        var shipping_country_id = jQuery('#order-shipping_address_address_country_id').val();
+        var shipping_city = jQuery('#order-shipping_address_address_city').val();
+        var shipping_region = jQuery('#order-shipping_address_address_region').val();
+        var shipping_region_id = jQuery('#order-shipping_address_address_region_id').val();
+        var shipping_postcode = jQuery('#order-shipping_address_address_postcode').val();
+        var shipping_telephone = jQuery('#order-shipping_address_address_telephone').val();
+        var billing_street = jQuery('#order-billing_address_address_street0').val();
+        var billing_country_id = jQuery('#order-billing_address_address_country_id').val();
+        var billing_city = jQuery('#order-billing_address_address_city').val();
+        var billing_region = jQuery('#order-billing_address_address_region').val();
+        var billing_region_id = jQuery('#order-billing_address_address_region_id').val();
+        var billing_telephone = jQuery('#order-billing_address_address_telephone').val();
+        var billing__postcode = jQuery('#order-billing_address_address_postcode').val();
+        iLog('Email new Customer', email);
+        newCustomerData = {
+            'email': email,
+            'firstname': firstname,
+            'lastname': lastname,
+            'newsletter': newsletter,
+            'billing_street': billing_street,
+            'billing_country_id': billing_country_id,
+            'billing_city': billing_city,
+            'billing_region': billing_region,
+            'billing_region_id': billing_region_id,
+            'billing_telephone': billing_telephone,
+            'billing_postcode': billing__postcode,
+            'shipping_street': shipping_street,
+            'shipping_country_id': shipping_country_id,
+            'shipping_city': shipping_city,
+            'shipping_region': shipping_region,
+            'shipping_region_id': shipping_region_id,
+            'shipping_postcode': shipping_postcode,
+            'shipping_telephone': shipping_telephone
+        };
+        sendNewCustomerToServer(newCustomerData);
+        clearFormRegister();
+    }
+
+    function sendNewCustomerToServer(dataCustomer) {
+        showMask();
+        iLog('Send New Customer To Server');
+        var formKey = '<?php if($this->getFormKey() !=''){
+            echo $this->getFormKey();
+    }?>';
+        var dataformkey = {'formkey': formKey};
+        jQuery.ajax({
+            url: '<?php echo $this->getUrl('adminhtml/xpos/createNewCustomer') ?>',
+            dataType: 'json',
+            data: dataCustomer,
+            success: function (data) {
+                console.log(data);
+                iLog('ajax data respone', data);
+                console.log('data error=' + data.error);
+                if (data.error != true) {
+                    iLog('create new customer sucsses!');
+                    jQuery('input[name="order[account][type]"]').val('exist');
+                    $('order_customer_id').value = data.customerId;
+                    order.customerId = data.customerId;
+                    /*
+                    * save new customer to jstorage
+                    * */
+                    dataCustomer.id = data.customerId;
+                    saveNewCustomer(dataCustomer);
+                    if (isOnline()) {
+                        order.itemsUpdate();
+                    }
+                    jQuery('#loading-mask').hide();
+                } else {
+                    iLog('email address already exists');
+                    jQuery('#loading-mask').hide();
+                    alert('This email address already exists!');
+                    come_back_guest();
+                }
+            }
+        });
+    }
+    function initOnlineSearchCustomer() {
+
+        var mode_current = jQuery('#network-availability').attr('class');
+        if (mode_current == 'network-online') {
+            new Ajax.Autocompleter(
+                'customer_search_field',
+                'customer_search_autocomplete',
+                '<?php echo $this->getUrl('adminhtml/xpos/customerSearch') ?>',
+                {
+                    paramName: "query",
+                    minChars: 3,
+                    //indicator: "customer_search_indicator",
+                    updateElement: getCustomerSelectionId,
+                    evalJSON: 'force'
+                    //autoSelect: true
+                }
+            );
+        }
+    }
+
+    function getCustomerSelectionId(li) {
+        if (li.getAttribute('id') == "no_result") {
+            return false;
+        }
+        var addressCusCount = li.getAttribute('addresses');
+        existAddress = {
+            'firstname': li.getAttribute('firstname'),
+            'lastname': li.getAttribute('lastname'),
+            'street': li.getAttribute('street'),
+            'city': li.getAttribute('city'),
+            'country_id': li.getAttribute('country_id'),
+            'region': li.getAttribute('region'),
+            'region_id': li.getAttribute('billing_region_id'),
+            'postcode': li.getAttribute('postcode'),
+            'telephone': li.getAttribute('telephone'),
+            'billing_street': li.getAttribute('billing_street'),
+
+            'shipping_firstname': li.getAttribute('shipping_firstname'),
+            'shipping_lastname': li.getAttribute('shipping_lastname'),
+            'shipping_city': li.getAttribute('shipping_city'),
+            'shipping_street': li.getAttribute('shipping_street'),
+            'shipping_country_id': li.getAttribute('shipping_country_id'),
+            'shipping_region': li.getAttribute('shipping_region'),
+            'shipping_region_id': li.getAttribute('shipping_region_id'),
+            'shipping_postcode': li.getAttribute('shipping_postcode'),
+            'shipping_telephone': li.getAttribute('shipping_telephone'),
+
+            'addressCusCount': li.getAttribute('addresses')
+        };
+        for (i = 0; i < addressCusCount; i++) {
+            var firstname = 'firstname' + i;
+            var lastname = 'lastname' + i;
+            var street = 'street' + i;
+            var city = 'city' + i;
+            var country_id = 'country_id' + i;
+            var region = 'region' + i;
+            var region_id = 'region_id' + i;
+            var region_id_attr = 'billing_region_id' + i;
+            var postcode = 'postcode' + i;
+            var telephone = 'telephone' + i;
+            var billing_street = 'billing_street' + i;
+
+            var shipping_firstname = 'shipping_firstname' + i;
+            var shipping_lastname = 'shipping_lastname' + i;
+            var shipping_city = 'shipping_city' + i;
+            var shipping_street = 'shipping_street' + i;
+            var shipping_country = 'shipping_country' + i;
+            var shipping_country_id = 'shipping_country_id' + i;
+            var shipping_region = 'shipping_region' + i;
+            var shipping_region_id = 'shipping_region_id' + i;
+            var shipping_postcode = 'shipping_postcode' + i;
+            var shipping_telephone = 'shipping_telephone' + i;
+//            var company = 'company' + i;
+            address = [];
+            address['firstname'] = li.getAttribute(firstname);
+            address['lastname'] = li.getAttribute(lastname);
+            address['street'] = li.getAttribute(street);
+            address['country_id'] = li.getAttribute(country_id);
+            address['city'] = li.getAttribute(city);
+            address['region'] = li.getAttribute(region);
+            address['region_id'] = li.getAttribute(region_id);
+            address['postcode'] = li.getAttribute(postcode);
+            address['telephone'] = li.getAttribute(telephone);
+            address['billing_street'] = li.getAttribute(billing_street);
+//            address['company'] = li.getAttribute(company);
+
+            existAddress[i] = address;
+
+        }
+        order.customerId = li.getAttribute('id');
+        setAdd(existAddress, true);
+        if (isOnline()) {
+            order.itemsUpdate();
+        }
+
+        $('order_customer_id').value = li.getAttribute('id');
+        $('order_account_email').value = li.getAttribute('email');
+        jQuery('#emailreceipt').val(li.getAttribute('email'));
+        jQuery('#cus_email_temp').val(li.getAttribute('email'));
+        jQuery('input[name="order[account][type]"]').val('exist');
+
+        jQuery("#customer_options").removeClass('search-customer');
+        jQuery("#customer_options").addClass('delete-customer');
+        jQuery("#customer_options").attr('onclick', 'come_back_guest()');
+        jQuery("#customer_name").html(li.getAttribute('name'));
+
+        enableBilling(jQuery("#order-billing_same_as_billing"));
+        jQuery("#customer_search").hide();
+        if (isAvailability()) {
+            jQuery(".list-customer").removeClass('disabled');
+            var limit = jQuery('#is_user_limited').val();
+            if (limit == 0) jQuery('.list-customer').addClass('disabled');
+        }
+        //List customer order icon
+        var class_network = jQuery('#network-availability').attr('class');
+        if (class_network == 'network-offline') {
+            jQuery('.list-customer').addClass('disabled');
+        }
+    }
+
+    function getCustomerDefault(li) {
+        var isAllowGuestCheckOut = window.allowGuestCheckout;
+        var defaultCustomerId = <?php if (Mage::getStoreConfig('xpos/checkout/enable_guest_checkout') == 1) {echo Mage::helper('xpos/configXPOS')->getDefaultCustomerId();} else {echo 1;} ?>;
+        if (li.getAttribute('id') == "no_result") {
+            return false;
+        }
+        existAddress = {
+            'firstname': li.getAttribute('firstname'),
+            'lastname': li.getAttribute('lastname'),
+            'street': li.getAttribute('street'),
+            'billing_street': li.getAttribute('billing_street'),
+            'city': li.getAttribute('billing_city'),
+            'country_id': li.getAttribute('billing_country_id'),
+            'region': li.getAttribute('billing_region'),
+            'region_id': li.getAttribute('billing_region_id'),
+            'postcode': li.getAttribute('billing_postcode'),
+            'telephone': li.getAttribute('billing_telephone'),
+
+            'shipping_firstname': li.getAttribute('shipping_firstname'),
+            'shipping_lastname': li.getAttribute('shipping_lastname'),
+            'shipping_city': li.getAttribute('shipping_city'),
+            'shipping_street': li.getAttribute('shipping_street'),
+            'shipping_country_id': li.getAttribute('shipping_country_id'),
+            'shipping_region': li.getAttribute('shipping_region'),
+            'shipping_region_id': li.getAttribute('shipping_region_id'),
+            'shipping_postcode': li.getAttribute('shipping_postcode'),
+            'shipping_telephone': li.getAttribute('shipping_telephone')
+        };
+        order.customerId = li.getAttribute('id_customer');
+        setAdd(existAddress, false);
+        if (isOnline()) {
+            order.itemsUpdate();
+        }
+
+        $('order_customer_id').value = li.getAttribute('id_customer');
+        $('order_account_email').value = li.getAttribute('email');
+        jQuery('#emailreceipt').val(li.getAttribute('email'));
+        jQuery('#cus_email_temp').val(li.getAttribute('email'));
+
+
+//    jQuery("#customer_options").removeClass('search-customer');
+//    jQuery("#customer_options").addClass('delete-customer');
+//    jQuery("#customer_options").attr('onclick', 'come_back_guest()');
+        jQuery("#customer_name").html(li.getAttribute('name'));
+        jQuery('.list-customer').addClass('disabled');
+        enableBilling(jQuery("#order-billing_same_as_billing"));
+        var mode = getTypeOrder();
+        if (isAllowGuestCheckOut == 0 && mode != 'reload') {
+            jQuery("#customer_name").html('Please select customer!');
+            jQuery('input[name="order[account][type]"]').val('not_allow_guest');
+        } else {
+            jQuery('input[name="order[account][type]"]').val('exist');
+        }
+//    jQuery("#customer_search").hide();
+//    if(isAvailability()){
+//        jQuery(".list-customer").removeClass('disabled');
+//        var limit = jQuery('#is_user_limited').val();
+//        if(limit==0) jQuery('.list-customer').addClass('disabled');
+//    }
+        //List customer order icon
+//    var class_network = jQuery('#network-availability').attr('class');
+//    if(class_network == 'network-offline'){
+//        jQuery('.list-customer').addClass('disabled');
+//    }
+    }
+
+    (function () {
+        var CustomerStorage = Class.create();
+        CustomerStorage.prototype = {
+            initialize: function () {
+                this.metaDataKey = 'customer_meta_data';
+                this.metaData = $.jStorage.get(this.metaDataKey, false);
+                if (!this.metaData) {
+                    $.jStorage.set(this.metaDataKey, {
+                        page: 1,
+                        finish: false
+                    });
+                }
+
+                this.dataKey = 'customers';
+                this.data = $.jStorage.get(this.dataKey, false);
+                if (!this.data) {
+                    this.data = {};
+                    $.jStorage.set(this.dataKey, {});
+                }
+
+                this.metaData = $.jStorage.get(this.metaDataKey);
+                this.data = $.jStorage.get(this.dataKey);
+            },
+            isFinishLoad: function () {
+                return this.metaData.finish;
+            },
+            finishLoad: function () {
+                iLog('Seted Finsissh Load');
+                this.metaData.finish = true;
+                $.jStorage.set(this.metaDataKey, this.metaData);
+            },
+            getCurrentPage: function () {
+                return this.metaData.page;
+            },
+            incrementPage: function () {
+                this.metaData.page = this.metaData.page + 1;
+                $.jStorage.set(this.metaDataKey, this.metaData);
+                return this.metaData.page;
+            },
+            addCustomer: function (customer) {
+                this.data[customer.id] = customer;
+                $.jStorage.get(this.dataKey)[customer.id] = customer;
+            },
+            getAllCustomer: function () {
+                return this.data;
+            }
+        };
+        window.CustomerStorage = new CustomerStorage();
+    })();
+
+    function storeCust() {
+        if (!CustomerStorage.isFinishLoad()) {
+            iLog('Not found data customer in jstorage. Will Store Customer');
+            var isEnableCustomerOffline = <?php echo Mage::helper('xpos/configXPOS')->getOfflineSearchCustomer() ?>;
+            var custPerReq = 0;
+            if (!!isEnableCustomerOffline) {
+                custPerReq = <?php echo (Mage::helper('xpos/configXPOS')->getCustPerRequest() == null ? 0 : Mage::helper('xpos/configXPOS')->getCustPerRequest())?>;
+            }
+            // create a deferred object
+            var dfd = jQuery.Deferred();
+            // add handlers to be called when dfd is resolved
+            dfd.done(function (n) {
+                // and save  it
+                CustomerStorage.finishLoad();
+                storeCust();
+            });
+            requestCust(dfd, CustomerStorage.getCurrentPage(), custPerReq);
+        } else {
+            iLog('Finish Load customer');
+            updateCustomersLoadedStatus(true);
+            //checkInitComplete();
+        }
+    }
+
+
+    /**
+     * huypq
+     * 31/03/2015
+     * Display customer data loaded progress status @ footer
+     */
+    function updateCustomersLoadedStatus($isFinish) {
+        if ($isFinish) {
+            jQuery.getJSON('<?php echo $this->getUrl('adminhtml/xpos/countAllCustomers') ?>', function (_data) {
+                var customerAmount = Object.keys($.jStorage.get('customers')).length;
+                _loadPercentage = (customerAmount / _data.total * 100).toFixed(0);
+                if(!isNumber(_loadPercentage)){
+                    _loadPercentage = 0;
+                }
+                _plural = _data.total > 1 ? ' customers' : ' customer';
+                _status = '| ' + _loadPercentage + '% of ' + _data.total + _plural;
+
+                jQuery('#customers-status').text(_status);
+                setStatusXposWorking('');
+            });
+        } else {
+            var totalSave = Object.keys($.jStorage.get('customers')).length;
+            var _plural = totalSave > 1 ? ' customers' : ' customer';
+            _status = '| ' + totalSave + _plural + ' saved';
+            jQuery('#customers-status').text(_status);
+        }
+    }
+
+    function requestCust(dfd, pageStart, limit) {
+        iLog('Request customer with page', pageStart);
+        jQuery.ajax({
+            url: '<?php echo $this->getUrl('adminhtml/xpos/customerLoad') ?>',
+            dataType: 'json',
+            data: {
+                limit: limit,
+                page: pageStart
+            },
+            success: function (data) {
+                jQuery.each(data, function (key, cust) {
+                    var object_count = Object.keys(cust).length;
+                    var tmp = processCustomerItemData(cust);
+                    if (object_count > 0) {
+                        CustomerStorage.addCustomer(tmp);
+                    }
+                });
+                if (Object.isArray(data) && !data.length) {
+                    iLog('Request customer return length =0. Will stop request customer');
+                    dfd.resolve();
+                } else {
+                    var data_load_interval = jQuery('#data_load_interval').val() * 1000;
+                    CustomerStorage.incrementPage();
+                    updateCustomersLoadedStatus(false);
+                    setTimeout(function () {
+                        requestCust(dfd, CustomerStorage.getCurrentPage(), limit);
+                    }, data_load_interval);
+
+                }
+            }
+        });
+    }
+
+    function processCustomerItemData(cust) {
+        var address = {
+            id: cust.id,
+            //label: cust.name,
+            label: cust.name + ' ' + cust.telephone + ' ' + cust.email,
+            name: cust.name,
+            desc: (cust.description == null ? "" : cust.description),
+            email: cust.email,
+            telephone: (cust.telephone == null ? "" : cust.telephone),
+            type: cust.type,
+            firstname: cust.firstname,
+            lastname: cust.lastname,
+            street: cust.street,
+            region: cust.region,
+            region_id: cust.region_id,
+            postcode: cust.postcode,
+            country_id: cust.country_id,
+            city: cust.city,
+
+            billing_street: cust.street,
+            billing_region: cust.region,
+            billing_region_id: cust.region_id,
+            billing_postcode: cust.postcode,
+            billing_country_id: cust.country_id,
+            billing_city: cust.city,
+            billing_telephone: (cust.telephone == null ? "" : cust.telephone),
+
+            shipping_firstname: (cust.shipping_firstname == null ? cust.firstname : cust.shipping_firstname),
+            shipping_lastname: (cust.shipping_lastname == null ? cust.lastname : cust.shipping_lastname),
+            shipping_city: (cust.shipping_city == null ? cust.city : cust.shipping_city),
+            shipping_street: (cust.shipping_street == null ? cust.street : cust.shipping_street),
+            shipping_country_id: (cust.shipping_country_id == null ? cust.country_id : cust.shipping_country_id),
+            shipping_region: (cust.shipping_region == null ? cust.region : cust.shipping_region),
+            shipping_region_id: (cust.shipping_region_id == null ? cust.region : cust.shipping_region_id),
+            shipping_postcode: ( cust.shipping_postcode == null ? cust.postcode : cust.shipping_postcode),
+            shipping_telephone: (cust.shipping_telephone == null ? cust.telephone : cust.shipping_telephone),
+            addresses: cust.addresses
+        };
+        return address;
+    }
+
+    function initSelectCust() {
+
+        jQuery("#customer_search_field").autocomplete({
+            minLength: 3,
+            source: function (request, response) {
+                jQuery('#customer_search_autocomplete').html('');
+                var term = request.term.toLowerCase();
+                var matcher = new RegExp(jQuery.ui.autocomplete.escapeRegex(term));
+//            var data = jQuery.grep( allCustomers, function( value ) {
+//                if (!!value && !!value.label) {
+//                    value = value.label.toLowerCase();
+//                    return matcher.test(value);
+//                }
+//                return false;
+//            });
+                var data = [];
+                var value;
+                allCustomers = CustomerStorage.getAllCustomer();
+                for (var itemId in allCustomers) {
+                    value = allCustomers[itemId];
+                    if (!!value && !!value.label && matcher.test(value.label.toLowerCase())) {
+                        data.push(value)
+                    }
+                }
+                jQuery('#customer_search_autocomplete').append('<ul></ul>');
+
+                if (data.length > 0) {
+                    jQuery.each(data, function (i, item) {
+                        var li_attr = '';
+                        jQuery.each(item, function (i, value) {
+                            if (i != 'addresses') {
+                                li_attr = li_attr + " " + i + "='" + value + "'";
+                            } else {
+                                /*
+                                 * if customer has >0 address
+                                 * */
+                                if(typeof (value) != 'object'){return;}
+                                li_attr += " " + i + "='" + Object.keys(value).length + "' ";
+                                var count = 0;
+                                jQuery.each(value, function (keyAddress, address) {
+                                    jQuery.each(address, function (keyAddressDetail, addressDetail) {
+                                        li_attr += " " + keyAddressDetail + count + "='" + addressDetail + "' ";
+                                    });
+                                    count++;
+                                });
+                            }
+                        });
+                        //convert name
+                        var cus_name = item.name;
+                        var length = cus_name.length;
+                        var new_name = '';
+                        if (length > 20) {
+                            new_name = cus_name.substring(0, 20);
+                            new_name = new_name + '...';
+                        }
+                        else new_name = cus_name;
+                        //convert email
+                        var cus_email = item.email;
+                        var phone_num = item.telephone;
+                        if (phone_num.length > 3)
+                            cus_email = phone_num + ' - ' + cus_email;
+                        var length1 = cus_email.length;
+                        var new_email = '';
+                        if (length1 > 24) {
+                            new_email = cus_email.substring(0, 21);
+                            new_email = new_email + '...';
+                        }
+                        else new_email = cus_email;
+
+
+                        var li_html = '<li onclick="getCustomerSelectionId(this)" ' + li_attr + '><span style="width: 50%; overflow: hidden; " class="name-customer">' + new_name + '</span><span style=" overflow: hidden; float: left !important; " class="email-customer">' + new_email + '</span></li>';
+                        jQuery('#customer_search_autocomplete ul').append(li_html);
+                    })
+                } else {
+                    var li_html = '<li id="no_result" class="selected"><span>No matching results</span></li>';
+                    jQuery('#customer_search_autocomplete ul').append(li_html);
+                }
+                jQuery('#customer_search_autocomplete').show();
+            }
+        })
+
+    }
+function saveNewCustomer(dataCustomer){
+    /*
+    *  label: cust.name + ' ' + cust.telephone + ' ' + cust.email,
+     desc: (cust.description == null ? "" : cust.description),
+     region: cust.region,
+     region_id: cust.region_id,
+     postcode: cust.postcode,
+     country_id: cust.country_id,
+     city: cust.city,
+    * */
+    var name = dataCustomer.firstname + ' ' + ' ' + dataCustomer.lastname;
+    dataCustomer.name = name;
+    dataCustomer.type = 'Customer';
+    dataCustomer.street = dataCustomer.billing_street;
+    dataCustomer.telephone = dataCustomer.billing_telephone;
+    dataCustomer.region = dataCustomer.billing_region;
+    dataCustomer.region_id = dataCustomer.billing_region_id;
+    dataCustomer.postcode = dataCustomer.billing_postcode;
+    dataCustomer.country_id = dataCustomer.billing_country_id;
+    dataCustomer.city = dataCustomer.billing_city;
+    dataCustomer.label = name +' '+dataCustomer.telephone+ ' ' + dataCustomer.email;
+    dataCustomer.shipping_firstname = dataCustomer.firstname;
+    dataCustomer.shipping_lastname = dataCustomer.lastname;
+    CustomerStorage.addCustomer(dataCustomer);
+    /*
+    * update customer amount
+    * */
+    var customerAmount = Object.keys($.jStorage.get('customers')).length;
+    var _plural = customerAmount > 1 ? ' customers' : ' customer';
+    var _status = '| ' + '100' + '% of ' + customerAmount + _plural;
+
+    jQuery('#customers-status').text(_status);
+}
+
+function clearFormRegister(){
+    jQuery("#order_customer_firstname").val('');
+    jQuery("#order_customer_lastname").val('');
+    jQuery("#order_customer_email").val('');
+}
+</script>

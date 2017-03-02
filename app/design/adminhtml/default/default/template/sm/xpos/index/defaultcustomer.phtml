@@ -1,0 +1,43 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: vjcpsy
+ * Date: 3/17/2015
+ * Time: 18:21
+ */
+$isTrue = $this->checkDefaultCustomer();
+$isTrue = true;
+if (!$isTrue) {
+    ?>
+    <div id="customer_popup" class="popup">
+        <div class="panel_block" id="customer-chooser">
+            <h4><?php echo $this->__("Warning!") ?></h4>
+            <ul id="customer_list">
+                <li><span class="no-customer no-hover"><?php echo $this->__("Please choose default customer in setting!") ?></span></li>
+            </ul>
+        </div>
+    </div>
+<?php
+}
+?>
+
+<script>
+    function show_default_customer() {
+        <?php
+        if(!$isTrue){
+                 ?>
+        jQuery('#customer_popup').bPopup({
+            modalClose: false,
+            escClose: false,
+            opacity: 0.6,
+            speed: 450,
+            transition: 'slideIn',
+            positionStyle: 'fixed' //'fixed' or 'absolute'
+        });
+        return false;
+        <?php }?>
+        return true;
+    }
+</script>
+
+

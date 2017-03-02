@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <SM_XReport>
+            <version>0.1.0</version>
+        </SM_XReport>
+    </modules>
+    <global>
+        <helpers>
+            <xreport>
+                <class>SM_XReport_Helper</class>
+            </xreport>
+        </helpers>
+        <blocks>
+            <xreport>
+                <class>SM_XReport_Block</class>
+            </xreport>
+        </blocks>
+        <models>
+            <xreport>
+                <class>SM_XReport_Model</class>
+                <resourceModel>xreport_mysql4</resourceModel>
+            </xreport>
+            <xreport_mysql4>
+                <class>SM_XReport_Model_Mysql4</class>
+                <entities>
+                    <xreportcustomer>
+                        <table>xreport_customer</table>
+                    </xreportcustomer>
+                </entities>
+            </xreport_mysql4>
+            <!--<sales_resource>-->
+            <!--<rewrite>-->
+            <!--<report_bestsellers_collection>SM_XReport_Model_Resource_Sales_Report_Bestsellers_Collection</report_bestsellers_collection>-->
+            <!--</rewrite>-->
+            <!--</sales_resource>-->
+        </models>
+        <resources>
+            <xreport_setup>
+                <setup>
+                    <module>SM_XReport</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </xreport_setup>
+            <xreport_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </xreport_write>
+            <xreport_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </xreport_read>
+        </resources>
+    </global>
+    <admin>
+        <routers>
+            <xreport>
+                <use>admin</use>
+                <args>
+                    <module>SM_XReport</module>
+                    <frontName>xreport</frontName>
+                </args>
+            </xreport>
+        </routers>
+    </admin>
+    <adminhtml>
+        <menu>
+            <!--<xreport module="xreport">-->
+            <!--<title>XReport</title>-->
+            <!--<sort_order>100</sort_order>-->
+            <!--<children>-->
+            <!--<xreportbackend module="xreport">-->
+            <!--<title>Go Go Go</title>-->
+            <!--<sort_order>0</sort_order>-->
+            <!--<action>xreport/sales/viewHistory</action>-->
+            <!--</xreportbackend>-->
+            <!--&lt;!&ndash;<xreportcustomer module="xreport">&ndash;&gt;-->
+            <!--&lt;!&ndash;<title>Manage Xreportcustomer</title>&ndash;&gt;-->
+            <!--&lt;!&ndash;<sort_order>20</sort_order>&ndash;&gt;-->
+            <!--&lt;!&ndash;<action>admin_xreport/adminhtml_xreportcustomer</action>&ndash;&gt;-->
+            <!--&lt;!&ndash;</xreportcustomer>&ndash;&gt;-->
+            <!--</children>-->
+            <!--</xreport>-->
+            <report>
+                <children>
+                    <xreport translate="title">
+                        <title>X-Report</title>
+                        <sort_order>0</sort_order>
+                        <action>xreport/view/index</action>
+                    </xreport>
+                </children>
+            </report>
+        </menu>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <!--<xreport translate="title" module="xreport">-->
+                        <!--<title>XReport</title>-->
+                        <!--<sort_order>1000</sort_order>-->
+                        <!--<children>-->
+                        <!--<xreportbackend translate="title">-->
+                        <!--<title>Backend Page Title</title>-->
+                        <!--</xreportbackend>-->
+                        <!--<xreportcustomer translate="title">-->
+                        <!--<title>Manage Xreportcustomer</title>-->
+                        <!--<sort_order>20</sort_order>-->
+                        <!--</xreportcustomer>-->
+                        <!--</children>-->
+                        <!--</xreport>-->
+                        <report>
+                            <children>
+                                <xreport translate="title">
+                                    <title>X-Report</title>
+                                </xreport>
+                            </children>
+                        </report>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+        <layout>
+            <updates>
+                <xreport>
+                    <file>xreport.xml</file>
+                </xreport>
+            </updates>
+        </layout>
+    </adminhtml>
+</config> 

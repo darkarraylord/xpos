@@ -1,0 +1,79 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: vjcspy
+ * Date: 6/23/15
+ * Time: 3:35 PM
+ */
+$jsWindowLink = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS) .'prototype/window.js';
+$cssWindowLink = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS) .'prototype/windows/themes/default.css';
+$cssLink = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN) .'adminhtml/default/default/lib/prototype/windows/themes/magento.css';
+$request = Mage::app()->getRequest()->getParams();
+$web = isset($request['website'])?$request['website']:'base';
+$store = isset($request['store'])?$request['store']:'default';
+?>
+    <script type="text/javascript" async="" src="<?php echo $jsWindowLink ?>"></script>
+    <link rel="stylesheet" href="<?php echo $cssWindowLink; ?>">
+    <link rel="stylesheet" href="<?php echo $cssLink; ?>">
+<table>
+    <tr>
+        <td>
+            <button onclick="showPopup('<?php echo Mage::getUrl("adminhtml/xpos/selectCustomer") ?>');" class="scalable" type="button" id="<?php echo $this->getHtmlId() ?>">
+                <span><?php echo 'Select Customer'; ?></span>
+            </button>
+        </td>
+    </tr>
+</table>
+<script type="text/javascript">
+    function showPopup(sUrl) {
+        var web = '<?php echo $web ?>';
+        var store = '<?php echo $store ?>';
+        var oPopup = new Window({
+            id:'popup_window',
+            className: 'magento',
+            url: sUrl +'website/'+web+'/store/'+store,
+            width: 900,
+            height: 575,
+            minimizable: false,
+            maximizable: false,
+            showEffectOptions: {
+                duration: 0.4
+            },
+            hideEffectOptions:{
+                duration: 0.4
+            },
+            destroyOnClose: true
+        });
+        oPopup.setZIndex(100);
+        oPopup.showCenter(true);
+    }
+    function closePopup() {
+        Windows.close('popup_window');
+    }
+
+    function setIdCustomer(id,name,email,telephone,country,state,website){
+        /*
+         * ID
+         * Name
+         * Email
+         * Telephone
+         * Country
+         * State
+         * Website
+         * */
+        //alert('Will set default customer id: ' + id);
+        document.getElementById('xpos_checkout_default_customer_id').value = id;
+        //document.getElementById('row_xpos_guest_guest_name').getElementsByClassName('value')[0].innerHTML = name;
+        //document.getElementById('row_xpos_guest_guest_email').getElementsByClassName('value')[0].innerHTML = email;
+        //document.getElementById('row_xpos_guest_guest_telephone').getElementsByClassName('value')[0].innerHTML = telephone;
+        //document.getElementById('row_xpos_guest_guest_country').getElementsByClassName('value')[0].innerHTML = country;
+        //document.getElementById('row_xpos_guest_guest_state').getElementsByClassName('value')[0].innerHTML = state;
+        //document.getElementById('row_xpos_guest_guest_website').getElementsByClassName('value')[0].innerHTML = website;
+        //document.getElementById('xpos_guest_default_customer_id').setAttribute("disabled","disabled");
+    }
+    //add to global
+    window.closePopup = closePopup;
+    window.setIdCustomer = setIdCustomer;
+</script>
+
+

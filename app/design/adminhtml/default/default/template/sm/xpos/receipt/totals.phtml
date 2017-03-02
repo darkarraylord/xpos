@@ -1,0 +1,212 @@
+<?php /* @var $this SM_XPos_Block_Adminhtml_XPos_Receipt_Totals */ ?>
+
+<?php
+$helper = Mage::helper('xpos/configXPOS');
+$var = $this->getParentBlock()->_viewVars;
+if (!$var['printGift']) { ?>
+    <div class="total-zone">
+        <table>
+            <tbody>
+            <?php if (in_array('subtotal', $this->additionFieldsToDisplay)): ?>
+                <tr>
+                    <td><?php echo $this->helper('xpos')->__('Subtotal') ?></td>
+                    <td align="right"><strong><?php echo $this->getSubtotal(); ?></strong></td>
+                </tr>
+            <?php endif; ?>
+            <?php if (!($helper->getConfigHideInfoIfIsZero() && $this->getDiscountAmount() == 0)): ?>
+                <tr>
+                    <td><?php echo $this->helper('xpos')->__('Discount (%s)', $this->getOrder()->getDiscountDescription()); ?></td>
+                    <td align="right"><strong><?php echo $this->formatPrice($this->getDiscountAmount()); ?></strong></td>
+                </tr>
+            <?php endif; ?>
+<?php if(Mage::getModel('xpos/integrate')->isIntegrateWithGiftVoucher()):?>
+            <tr>
+                <td><?php echo $this->__('Gift Voucher') ?></td>
+                <td align="right">
+                    <strong>
+                        <?php echo $this->getOrder()->formatPrice($this->getOrder()->getGiftVoucherDiscount());?>
+                    </strong>
+                </td>
+            </tr>
+<?php endif;?>
+
+            <?php if (Mage::getModel('xpos/integrate')->isIntegrateMageWorldRp()) { ?>
+                <?php
+                $_order = $this->getOrder();
+
+
+                $baseCurrencyCode = Mage::getModel('sales/order')->load($_order->getId())->getData('base_currency_code');
+                $currentCurrencyCode = Mage::getModel('sales/order')->load($_order->getId())->getData('order_currency_code');
+
+                $rewardOrder = Mage::getModel('rewardpoints/rewardpointsorder')->load($_order->getId());
+                $store_id = Mage::getModel('sales/order')->load($_order->getId())->getStoreId();
+                $reward_point_discount = $_order->getMwRewardpointDiscount();
+                $reward_point_discount_show = $_order->getMwRewardpointDiscountShow();
+                if ($reward_point_discount == 0) $reward_point_discount = $rewardOrder->getMoney();
+                if ($reward_point_discount_show == 0) $reward_point_discount_show = Mage::helper('directory')->currencyConvert($rewardOrder->getMoney(), $baseCurrencyCode, $currentCurrencyCode);
+
+
+                $rewardpoints = (int)$this->getOrder()->getMwRewardpoint();
+                if ($rewardpoints == 0) $rewardpoints = $rewardOrder->getRewardPoint();
+
+
+                if ($reward_point_discount > 0) {
+                    $value = -$reward_point_discount;
+                    $value_show = -$reward_point_discount_show;
+                    ?>
+                    <tr>
+                        <td><?php echo Mage::helper('rewardpoints')->__('You Redeemed(%s)', trim(Mage::helper('rewardpoints')->formatPoints($rewardpoints, $store_id))); ?></td>
+                        <td align="right"><strong>
+                                <?php echo $this->displayPrices($value, $value_show); ?></strong>
+                        </td>
+                    </tr>
+                <?php }
+            ; ?>
+
+                <!--TODO: EARN-->
+
+                <?php
+
+                $_order = $this->getOrder();
+//                $_source = $this->getSource();
+//                $this->setPriceDataObject($_source);
+
+                $rewardOrder = Mage::getModel('rewardpoints/rewardpointsorder')->load($_order->getId());
+                $store_id = Mage::getModel('sales/order')->load($_order->getId())->getStoreId();
+                $earn_rewardpoint = (int)$rewardOrder->getEarnRewardpoint();
+
+                if ($earn_rewardpoint) { ?>
+                    <tr>
+                        <td class="label">
+                            <?php echo Mage::helper('rewardpoints')->__('You Earn'); ?>
+                        </td>
+                        <td align="right"><?php echo Mage::helper('rewardpoints')->formatPoints($earn_rewardpoint, $store_id) ?></td>
+                    </tr>
+                <?php };
+                ?>
+            <?php } ?>
+
+
+
+            <?php if (Mage::getModel('xpos/integrate')->isIntegrateRackRp() && $this->getOrder()->getPointReceived() > 0) { ?>
+                <tr>
+                    <td><?php echo $this->__('Received point for this order') ?></td>
+                    <td align="right"><strong>
+                            <?php echo $this->__('%s points', number_format($this->getOrder()->getPointReceived())) ?>
+                        </strong></td>
+                </tr>
+                <?php $_helper = Mage::helper('rackpoint') ?>
+                <tr>
+                    <td class="label nobr">
+                        <?php echo $this->__('Point Used') ?>
+                        <span class="rate-desc">
+                (<?php echo $_helper->getPointRateDescription($this->getOrder()->getPointRate(), $this->getOrder()->getStoreId()) ?>
+                            )
+            </span>
+                    </td>
+                    <td class="nobr" align="right">
+                        <strong><?php echo number_format($this->getOrder()->getPointUsed()) ?> </strong>
+                        (<strong><?php echo $this->getOrder()->formatPrice($_helper->point2Currency($this->getOrder()->getPointUsed(), $this->getOrder()->getPointRate())) ?></strong>)
+                    </td>
+                </tr>
+            <?php } ?>
+            <?php if ($this->getOrder()->getPointReceivedInvoiced() > 0): ?>
+                <tr>
+                    <td><?php echo $this->__('Received point invoiced') ?></td>
+                    <td align="right"><strong>
+                            <?php echo $this->__('%s points', number_format($this->getOrder()->getPointReceivedInvoiced())) ?></strong>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if ($this->getOrder()->getPointReceivedRefunded() > 0): ?>
+                <tr>
+                    <td><?php echo $this->__('Received point refunded') ?></td>
+                    <td align="right"><strong>
+                            <?php echo $this->__('%s points', number_format($this->getOrder()->getPointReceivedRefunded())) ?></strong>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if ($this->getOrder()->getPointReceivedCanceled() > 0): ?>
+                <tr>
+                    <td><?php echo $this->__('Received point cancelled') ?></td>
+                    <td align="right"><strong>
+                            <?php echo $this->__('%s points', number_format($this->getOrder()->getPointReceivedCanceled())) ?></strong>
+                    </td>
+                </tr>
+            <?php endif; ?>
+
+            <?php if ($this->getGiftCards() != false) : ?>
+                <?php $cards = $this->getGiftCards(); ?>
+                <?php foreach ($cards as $_card): ?>
+                    <tr>
+                        <td><?php echo $this->helper('sales')->__('Gift Card') ?> (<?php echo $_card['c']; ?>)</td>
+                        <td align="right"><strong>-<?php echo $this->getOrder()->formatPrice($_card['a']); ?></strong>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+            <?php if (in_array('tax', $this->additionFieldsToDisplay)): ?>
+                <tr>
+                    <td><?php echo $this->helper('sales')->__('Taxes') ?></td>
+                    <td align="right"><strong><?php echo $this->getTaxesAmount(); ?></strong></td>
+                </tr>
+            <?php endif; ?>
+            <?php if (!($helper->getConfigHideInfoIfIsZero() && $this->getShippingAmount() == 0)):
+                ?>
+                <tr>
+                    <td><?php echo $this->helper('sales')->__('Shipping') ?></td>
+                    <td align="right"><strong><?php echo $this->formatPrice($this->getShippingAmount()); ?></strong>
+                    </td>
+                </tr>
+            <?php endif ?>
+
+            <?php if ($this->getEarnPoint() > 0):
+                ?>
+                <tr>
+                    <td><?php echo $this->helper('sales')->__('Earn Points') ?></td>
+                    <td align="right"><strong><?php echo $this->getEarnPoint(); ?></strong>
+                    </td>
+                </tr>
+            <?php endif ?>
+
+            <?php if (!is_null($this->getSpentDiscount())):
+                ?>
+                <tr>
+                    <td><?php echo $this->helper('sales')->__('Use points on spend:') ?></td>
+                    <td align="right"><strong><?php echo "-".$this->getSpentDiscount(); ?></strong>
+                    </td>
+                </tr>
+            <?php endif ?>
+
+            <?php if ($this->getStoreCredit() != false): ?>
+                <tr>
+                    <td><?php echo $this->helper('sales')->__('GiftCards') ?></td>
+                    <td align="right"><strong><?php echo $this->getGiftCardsAmount(); ?></strong></td>
+                </tr>
+            <?php endif; ?>
+
+
+            <?php if ($this->getStoreCredit() != false): ?>
+                <tr>
+                    <td><?php echo $this->helper('sales')->__('Store Credit') ?></td>
+                    <td align="right"><strong><?php echo $this->getStoreCredit(); ?></strong></td>
+                </tr>
+            <?php endif; ?>
+            <tr>
+                <td><?php echo $this->helper('sales')->__('Total') ?></td>
+                <td align="right"><strong><?php echo $this->getGrandTotal(); ?></strong></td>
+            </tr>
+            <tr>
+                <td><?php echo $this->helper('xpos')->__('Total Paid') ?></td>
+                <td align="right"><strong><?php echo $this->getTotalPaid(); ?></strong></td>
+            </tr>
+            <?php if ($this->getBalance() != false): ?>
+                <tr>
+                    <td><?php echo $this->helper('xpos')->__('Change') ?></td>
+                    <td align="right"><strong><?php echo $this->getBalance(); ?></strong></td>
+                </tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+<?php } ?>

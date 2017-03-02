@@ -1,0 +1,54 @@
+<style>
+    #config-panel #sidebar ul li .update::before{
+        content: '\f0ed' !important;
+    }
+</style>
+<div id="sidebar" style="display: none">
+    <ul id="sidebar_menu_items">
+<!--        <li id="report_menu_item"><a href="--><?php //echo Mage::helper("adminhtml")->getUrl("*/report/xpos");?><!--" target="_blank" class="report">Report</a></li>-->
+        <li id="report_menu_item" ><a href="#" class="report"><?php echo $this->__("Report") ?></a></li>
+        <li id="order_list_menu_item"><a href="javascript:" onclick="showOrderList()" class="order"><?php echo $this->__("Order List") ?></a></li>
+        <li id="staft_menu_item"><a href="<?php echo Mage::helper("adminhtml")->getUrl("*/cashier");?>" target="_blank" class="staff"><?php echo $this->__("Staff") ?></a></li>
+        <?php if(Mage::helper('xpos/configXPOS')->getIntegrateXmwhEnable() >0 ){ ?>
+            <li id="warehouse_menu_item"><a href="javascript:" onclick="xpos_change_warehouse()" class="warehouse"><?php echo $this->__("Warehouse") ?></a></li>
+        <?php } ?>
+        <li id="cashdrawer_menu_item"><a href="javascript:" onclick="showTransactionList()" class="cashdrawer"><?php echo $this->__("Cash Drawer") ?></a></li>
+        <li id="admin_menu_item"><a href="<?php echo Mage::helper("adminhtml")->getUrl("*/system_config/edit/section/xpos/");?>" target="_blank" class="admin"><?php echo $this->__("Setting") ?></a></li>
+        <!--        --><?php //if(!Mage::helper('xpos/configXPOS')->getIntegrateXmwhEnable()){ ?>
+        <li id="update_item" ><a onclick="updateHard();" href="<?php echo Mage::helper("adminhtml")->getUrl("adminhtml/xpos/flushXPosCache");?>" target="_self"  class="update"><?php echo $this->__("Update") ?></a></li>
+        <!--        --><?php //}?>
+        <li id="warehouse_menu_item"><a href="javascript:" onclick="xpos_change_store()" class="warehouse"><?php echo $this->__("Store") ?></a></li>
+        <?php if(Mage::helper('xpos/configXPOS')->getEnableCashier()){ ?>
+        <li id="logout_menu_item"><a href="javascript:" onclick="xpos_user_logout()" class="logout"><?php echo $this->__("Logout") ?></a></li>
+        <?php } ?>
+               
+    </ul>
+    <ul class="button-bottom">
+        <li id="manual_reload_button" style="display: none"><a href="javascript:" onclick="manual_reload()"><?php echo $this->__("Flush Local Cache") ?></a></li>
+        <?php if(Mage::helper('xpos/configXPOS')->getOfflineMode() == 1){ ?>
+        <li><a id="link_sync_order" href="javascript:" onclick="/*showOfflineOrdersList()*/;/*submitOfflineNewT()*/"><span id="count_pending_orders">0</span> Pending Orders </a></li>
+        <?php } ?>
+    </ul>    
+</div>
+
+<script>
+    jQuery('body').on('click','#report_menu_item',function(){
+        showReportMenu();
+    });
+
+    jQuery('body').on('click','#config-button',function(){
+        var limit  = jQuery('#is_user_limited').val();
+        if(limit==0){
+            jQuery('#admin_menu_item').html();
+            jQuery('#admin_menu_item').attr('style',"display:none");
+            jQuery('#staft_menu_item').html();
+            jQuery('#staft_menu_item').attr('style',"display:none");
+        }
+    });
+    function updateHard(){
+        $.jStorage.flush();
+        if(productData !== null){
+            productData = null;
+        }
+    }
+</script>

@@ -1,0 +1,122 @@
+<?php
+/**
+ * Created by IntelliJ IDEA.
+ * User: vjcspy
+ * Date: 11/2/15
+ * Time: 11:12 AM
+ */
+?>
+
+<div ng-controller="salesHistoryCtrl">
+    <iz-filter-container iz-datatable="dataTable.salesHistory"
+                         iz-data-column-index='index = [
+            {columnId: "method", name: "Payment method", show: "alwayFalse", filterType: "select",dataSelect:<?php echo Mage::helper('xreport')->getActivePaymentMethods() ?>, filterChecked: false,isCriteria :true,defaultCriteria:true },
+            {columnId: "status", name: "Status", show: "alwayFalse",filterType: "select", filterChecked: false,dataSelect:<?php echo $this->getArrayOrderStatusForSelect() ?>,isCriteria :true,defaultCriteria:false},
+            {columnId: "shipping_method", name: "Shipping method", show: "alwayFalse",filterType: "select",dataSelect:<?php echo Mage::helper('xreport')->getAllShippingMethods() ?>, filterChecked: false,isCriteria :true,defaultCriteria:false},
+            {columnId: "sku", name: "Sku", show: "alwayFalse",filterType: "text", filterChecked: false,isCriteria :true,defaultCriteria:false},
+            {columnId: "customer_group_code", name: "Customer Group", show: "alwayFalse",filterType: "text", filterChecked: false,isCriteria :true,defaultCriteria:false},
+            {columnId: "customer_email", name: "Customer Email", show: false,filterType: "text", filterChecked: false,isCriteria :true,defaultCriteria:false},
+            {columnId: "product_type", name: "Product Type", show: false,filterType: "text", filterChecked: false,isCriteria :true,defaultCriteria:false},
+            {columnId: "order_currency_code", name: "Currency", show: false,filterType: "text", filterChecked: false,isCriteria :true,defaultCriteria:false},
+            {columnId: "country", name: "Country", show: false,filterType: "text", filterChecked: false,isCriteria :true,defaultCriteria:false},
+            {columnId: "day_of_week", name: "Day Of Week", show: false,filterType: "text", filterChecked: false,isCriteria :true,defaultCriteria:false},
+            {columnId: "hour", name: "Hour", show: false,filterType: "text", filterChecked: false,isCriteria :true,defaultCriteria:false},
+
+            {columnId: "created_at", name: "Date", show: "alwayFalse",filterType: "dateRange", filterChecked: true},
+
+            {columnId: "quantity", name: "Quantity", show: true,filterType: "text", filterChecked: false},
+            {columnId: "shipping_amount", name: "Shipping amount", show: true,filterType: "text", filterChecked: false},
+            {columnId: "base_subtotal", name: "Total", show: true,filterType: "text", filterChecked: false},
+            {columnId: "base_subtotal_refunded", name: "Subtotal refunded", show: false,filterType: "text", filterChecked: false},
+            {columnId: "discount_amount", name: "Discount", show: false,filterType: "text", filterChecked: false},
+            {columnId: "shipping_tax_amount", name: "Shipping tax", show: false,filterType: "text", filterChecked: false},
+            {columnId: "shipping_tax_refunded", name: "Shipping tax refunded", show: false,filterType: "text", filterChecked: false},
+            {columnId: "shipping_refunded", name: "Shipping refunded", show: false,filterType: "text", filterChecked: false},
+            {columnId: "total_qty_ordered", name: "Total qty", show: false,filterType: "text", filterChecked: false},
+            {columnId: "total_refunded", name: "Total refunded", show: false,filterType: "text", filterChecked: false},
+            {columnId: "grand_total", name: "Grand total", show: false,filterType: "text", filterChecked: false},
+    ]'
+                         iz-data-table-init-column="dataTable.salesHistoryInitColumn">
+        <iz-filter-control>
+            <iz-filter-controller-filter-type></iz-filter-controller-filter-type>
+            <iz-filter-controller-elem></iz-filter-controller-elem>
+        </iz-filter-control>
+        <iz-filter-action></iz-filter-action>
+    </iz-filter-container>
+
+
+    <!-- /.row -->
+    <div class="row" style="padding-bottom: 50px">
+        <div class="col-lg-12">
+            <!--            <div class="panel panel-default">-->
+            <!-- /.panel-heading -->
+            <!--                <div class="panel-body">-->
+            <div class="table-responsive">
+                <table class="table table-stripeda table-bordereda table-hover full-min-width"
+                       id="salesHistoryTable">
+                    <thead>
+                    <tr>
+                        <th width="250px">Payment Method</th>
+                        <th width="250px">Status</th>
+                        <th width="250px">Shipping method</th>
+                        <th width="250px">Sku</th>
+                        <th width="250px">Customer group</th>
+                        <th width="250px">Customer Email</th>
+                        <th width="250px">Product type</th>
+                        <th width="250px">Currency</th>
+                        <th width="250px">Country</th>
+                        <th width="250px">Day of week</th>
+                        <th width="250px">Hour</th>
+                        <th>Date</th>
+                        <th align="right">Quantity</th>
+                        <th>Shipping amount</th>
+                        <th>Total</th>
+                        <th>Subtotal refunded</th>
+                        <th>Discount</th>
+                        <th>Shipping tax</th>
+                        <th>Shipping tax refunded</th>
+                        <th>Shipping refunded</th>
+                        <th>Total qty</th>
+                        <th>Total refunded</th>
+                        <th>Grand Total</th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th>Total</th>
+                        <th>Total</th>
+                        <th>Total</th>
+                        <th>Total</th>
+                        <th>Total</th>
+                        <th>Total</th>
+                        <th>Total</th>
+                        <th>Total</th>
+                        <th>Total</th>
+                        <th>Total</th>
+                        <th>Total</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </tfoot>
+                </table>
+                <!--                    </div>-->
+                <!-- /.table-responsive -->
+                <!--                </div>-->
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>

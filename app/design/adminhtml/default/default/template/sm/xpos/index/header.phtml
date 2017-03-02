@@ -1,0 +1,224 @@
+<div class="main-content">
+    <div class="config">
+        <div class="config-logo">
+            <?php
+            $logo_url = $this->getSkinUrl('sm/xpos/images/logo.png');
+            if (is_file('media/xpos/' . Mage::getStoreConfig('xpos/customize/logo'))) {
+                $logo_url = Mage::getBaseUrl('media') . 'xpos/' . Mage::getStoreConfig('xpos/customize/logo');
+            }
+            ?>
+            <a id="config-button" class="hide"><img src="<?php echo $logo_url; ?>"/></a>
+        </div>
+    </div>
+    <div class="search effect2_"><div id="i_search_"><input type="text" id="search-box" onclick="this.select()" value="" placeholder="Search Product..."/></div> </div>
+    <script>
+//        jQuery('#i_search :input').fancyInput();
+    </script>
+    <div id="nav">
+        <ul>
+            <li class="save level-0">
+                <a id="save-button" class="button-save" onclick="saveOrder();">
+                    <span id="order_saved_count" class="value-save"></span>
+                </a>
+            </li>
+            <li class="cancel level-0">
+                <a id="save-button" class="button-cancel" onclick="cancelOrder();"></a>
+            </li>
+            <li class="option level-0">
+                <a id="options_checkout_button" class="button-option"
+                   onclick="show_options_checkout()"></a>
+                <ul class="option-panel" id="option-list">
+                    <?php if (!Mage::helper('xpos/configXPOS')->getCheckOutConfirm()) { ?>
+
+                        <?php if (Mage::helper('xpos/configXPOS')->getCreateInvoiceDisplay()): ?>
+                            <li class="invoice_option level-1 <?php if (Mage::helper('xpos/configXPOS')->getCreateInvoice()) {
+                                echo "active";
+                            } ?>" id="invoice_toggle" name="invoice_toggle">
+                                <a href="javascript:" id="option1-button" class="option"
+                                   onclick="setCheckBox('invoice_toggle');"><?php echo $this->__("Create invoice") ?></a>
+                            </li>
+                        <?php endif; ?>
+                        <?php if (Mage::helper('xpos/configXPOS')->getCreateShipmentDisplay()): ?>
+                            <li class="shipment_option level-1 <?php if (Mage::helper('xpos/configXPOS')->getCreateIShipmment()) {
+                                echo "active";
+                            } ?>" id="shipment_toggle" name="shipment_toggle">
+                                <a href="javascript:" id="option1-button" class="option"
+                                   onclick="setCheckBox('shipment_toggle');"><?php echo $this->__("Create shipment") ?></a>
+                            </li>
+                        <?php endif; ?>
+                        <li class="level-1 <?php if (Mage::helper('xpos/configXPOS')->getPrintReceipt()) {
+                            echo "active";
+                        } ?>" id="receipt_toggle" name="receipt_toggle">
+                            <a href="javascript:" id="option1-button" class="option"
+                               onclick="setCheckBox('receipt_toggle');"><?php echo $this->__("Print receipt") ?></a>
+                        </li>
+                        <?php if (Mage::getStoreConfig('xpos/receipt/enabled')) { ?>
+                            <li class="email-option level-1 <?php if (Mage::getStoreConfig('xpos/receipt/email_receipt')/*&& Mage::getStoreConfig('xpos/general/create_invoice')*/) {
+                                echo "active";
+                            } ?>" id="mail_toggle" name="mail_toggle" style="dis">
+                                <div>
+                                    <a href="javascript:" id="option3-button" class="option"
+                                       onclick="setCheckBox('mail_toggle');">
+                                        <label><?php echo $this->__("Email") ?>:</label>
+                                    </a>
+                                </div>
+                                <div class="input-container">
+                                    <input type="email" name="emailreceipt" id="emailreceipt"
+                                           placeholder="Email receipt" value=""/>
+                                </div>
+                            </li>
+                        <?php } ?>
+                    <?php } ?>
+
+                    <li class="level-1 no-hover" id="order-comment">
+                        <a href="javascript:" id="option3-button" class="option">
+                            <label><?php echo $this->__("Comment") ?>:</label>
+                            <textarea
+                                name="order[comment][customer_note]" placeholder="Comments"
+                                spellcheck="false"></textarea>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <script>
+        /* jQuery('#mail_toggle').click(function() {
+         if(!jQuery('#invoice_toggle').hasClass('active')){
+         alert('You must create invoice to send Email!');
+         jQuery('#mail_toggle').removeClassName('active');
+         return false;
+         }
+         });*/
+    </script>
+    <div class="checkout">
+        <div id="grandtotal" class="total">0.00</div>
+        <button id="checkout_mode_button" class="checkout_mode" type="button" onclick="change_checkout_mode()">
+            <?php echo $this->__("Online checkout") ?>
+        </button>
+    </div>
+    <div class="clear"></div>
+    <div id="dialog-modal" class="popup"></div>
+</div>
+<script>
+
+    order.commentFieldsBind('order-comment');
+    function cancelOrder() {
+        setTypeOrder('origin');
+        if (confirm('<?php echo $this->__("Cancel current order?") ?>')) {
+            if (isOnline()) {
+                $.jStorage.deleteKey('checkoutMode');
+                removeSelectedPaymentVrShipment();
+                window.location.href = '<?php echo $this->getUrl('*/*/clear') ?>';
+            } else {
+                clearOrder();
+            }
+        }
+    }
+
+    function showMask() {
+        var loaderArea = $$('#html-body .wrapper')[0]; // Blocks all page
+        Position.clone($(loaderArea), $('loading-mask'), {offsetLeft:-2});
+        toggleSelectsUnderBlock($('loading-mask'), false);
+        Element.show('loading-mask');
+    }
+    var emailChanged = '';
+    var isPchange = false;
+    jQuery('#emailreceipt').blur(function () {
+        emailChanged = jQuery('#emailreceipt').val();
+        isPchange = true;
+    });
+
+    var numOfOrder = 0;
+    var tempLdMask;
+
+    function saveOrder() {
+        if (jQuery('#order-items_grid tbody tr').length > 0) {
+            setTypeOrder('origin');
+            order.save('<?php echo $this->getUrl("*/*/save"); ?>', '<?php echo $this->__("Are you sure to save this order and move to new order screen?") ?>');
+            $.jStorage.deleteKey('checkoutMode');
+            removeSelectedPaymentVrShipment();
+        } else {
+            showOrderSaved();
+        }
+    }
+
+    function parseOrderInfo(json) {
+        var result = "";
+
+        // process items
+        delete json['form_key'];
+        delete json['entity_id'];
+        delete json['limit'];
+        delete json['page'];
+        delete json['name'];
+        delete json['sku'];
+        delete json['price[from]'];
+        delete json['price[to]'];
+        delete json['order[send_confirmation]'];
+        delete json['calc_total'];
+        delete json['in_products'];
+        delete json['order[account][group_id]'];
+        delete json['order[shipping_method]'];
+        delete json['coupon_code'];
+        delete json['ccsave-swiper-data'];
+        delete json['balance'];
+        // new cust
+        delete json['order[billing_address][firstname_temp]'];
+        delete json['order[billing_address][lastname_temp]'];
+
+
+        if (json.shipping_same_as_billing == "on") {
+            delete json['order[shipping_address][firstname]'];
+            delete json['order[shipping_address][lastname]'];
+            delete json['order[shipping_address][street][0]'];
+            delete json['order[shipping_address][city]'];
+            delete json['order[shipping_address][country_id]'];
+            delete json['order[shipping_address][region]'];
+            delete json['order[shipping_address][postcode]'];
+            delete json['order[shipping_address][telephone]'];
+        }
+
+
+        return '<table><tr><td>' + JSON.stringify(json).substring(2)
+                .replace(/item\[/g, 'Product (id:')
+                .replace(/]\[qty]/g, ') Qty')
+                .replace('order[account][type]', 'Account type')
+                .replace('order[customer_id]', 'Customer Id')
+                .replace('order[account][email]', 'Customer Email')
+                // new customer
+                .replace('order[billing_address][firstname]', 'First Name')
+                .replace('order[billing_address][lastname]', 'Last Name')
+                .replace('order[account][email_temp]', 'Email')
+                .replace('order[billing_address][telephone]', 'Phone')
+
+                .replace('shipping_same_as_billing', 'Use billing as shipping address')
+                .replace('payment[method]', 'Payment method')
+                .replace('order[comment][customer_note]', 'Comments')
+                .replace('cash-in', 'Total Paid')
+                //        .replace('balance','Refunded')
+                .replace(/","/g, '" /></td></tr><tr><td>')
+                .replace(/":"/g, '<td><input type="text" value="')
+                .replace(/"}/g, '') + '" /></td></tr></table>'
+
+
+            ;
+    }
+    function displayLoadingMask() {
+        var loaderArea = $$('#html-body .wrapper')[0]; // Blocks all page
+        Position.clone($(loaderArea), $('loading-mask'), {offsetLeft: -2});
+        toggleSelectsUnderBlock($('loading-mask'), false);
+        Element.show('loading-mask');
+    }
+
+    function hideLoadingMask() {
+        Element.hide('loading-mask');
+    }
+    function syncShipping(code, title) {
+        jQuery("#shipping_detail").html(title);
+//        delay(function () {
+            order.setShippingMethodSyn(code,title);
+//        }, 2000);
+    }
+
+</script>

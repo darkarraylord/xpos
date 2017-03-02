@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $this->getLang() ?>" lang="<?php echo $this->getLang() ?>">
+<head>
+    <meta charset="utf-8" />
+
+    <!--INTERNAL STYLE SHEET-->
+    <style>
+        @media (max-width: 480px) {
+            .items-view table .row-total {
+                display: none;
+            }
+            .methods {
+                display: block !important;
+            }
+        }
+        @media (max-width: 380px) {
+            .items-view table .item-name {
+                max-width: 120px;
+            }
+            .items-view table .price-container,
+            .items-view table .tax {
+                display: none !important;
+            }
+            .items-view table .row-total {
+                display: table-cell !important;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+        html {
+            font-family: <?php echo $this->getFont(); ?>;
+            font-size: 13px;
+            text-transform: uppercase !important;
+        }
+        body, h1, h2, h3, h4, h5, h6, ul {
+            padding: 0;
+            margin: 0;
+            font-weight: normal;
+        }
+        table {
+            border-spacing: 0;
+        }
+        ul {
+            list-style: none;
+        }
+        .flex-container {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: space-around;
+            justify-content: space-around;
+        }
+
+        .paper {
+            margin: 0;
+            padding: 15px 0;
+        }
+
+        .logo-container, .store-info {
+            text-align: center;
+        }
+        .store-info {
+            margin-bottom: 5px;
+        }
+        .store-info .name {
+            font-weight: 800;
+            text-align: inherit;
+        }
+
+        #logo {
+            font-family: Segoe UI, Arial, sans-serif;
+            font-weight: 800;
+            font-size: 32px;
+        }
+
+        #logo img {
+            max-width: 200px;
+        }
+
+        .receipt-info {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .receipt-info .customer-info {
+            text-transform: uppercase;
+        }
+
+        .items-view {
+            padding: 3px 0;
+            margin-bottom: 5px;
+        }
+        .items-view table {
+            width: 100%;
+            text-align: right;
+            font-size: inherit;
+            font-weight: inherit;
+            border-collapse: separate;
+        }
+
+        .items-view table thead {
+            vertical-align: top;
+        }
+
+        .items-view table tbody {
+            vertical-align: top;
+        }
+
+        .items-view table tbody tr td {
+            padding: 5px 0;
+        }
+
+        .items-view table td,
+        .items-view table th {
+            border-left: 10px solid transparent;
+        }
+
+        .items-view table td:first-child,
+        .items-view table th:first-child {
+            border-left: none;
+        }
+
+        .items-view table .item-name {
+            overflow: hidden;
+            white-space: normal;
+            text-transform: capitalize;
+        }
+
+        .items-view table .item-name .sku {
+            display: block;
+            text-transform: none;
+        }
+
+        .items-view table td[data-metadata='qty'] {
+            font-weight: 800;
+        }
+
+        .total-zone {
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .total-zone .title {
+            display: -webkit-flex;
+            display: flex;
+            font-weight: 800;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            -webkit-align-items: center;
+            align-items: center;
+        }
+        .total-zone .title .literal {
+
+        }
+        .total-zone table {
+            font-weight: inherit;
+            font-size: inherit;
+            width: 100%;
+        }
+        .methods {
+            display: block;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .footer {
+            text-align: center;
+        }
+        .footer .highlight {
+            text-transform: uppercase;
+            font-weight: 400;
+            font-size: 28px;
+        }
+        .footer .separate {
+
+        }
+        .date {
+            text-align: right;
+        }
+
+        @media screen {
+            .paper {
+                margin: 15px auto;
+                max-width: 600px;
+            }
+        }
+        @media print {
+
+        }
+    </style>
+</head>
+<body>
+    <div class="paper fluid-container">
+        <div class="logo-container container">
+            <?php echo $this->getChildHtml('logo'); ?>
+        </div>
+        <div class="store-info-container container">
+            <?php echo $this->getChildHtml('store_info', false); ?>
+        </div>
+        <div class="receipt-info-container container">
+            <?php echo $this->getChildHtml('order_info', false); ?>
+        </div>
+        <div class="items-view-container container">
+            <?php echo $this->getChildHtml('items_view', false); ?>
+        </div>
+        <div class="total-zone-container container">
+            <?php echo $this->getChildHtml('totals_zone', false); ?>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        /*
+         * http://stackoverflow.com/questions/3196572/addloadevent-is-not-helping-with-onload-conflict#3196789
+         */
+        function addLoadEvent(func) {
+            if (window.addEventListener)
+                window.addEventListener('load', func, false);
+            else if (window.attachEvent())
+                window.attachEvent('onload', func);
+            else {
+                var old = window.onload;
+                window.onload = function () {
+                    if (old) old();
+                    func();
+                }
+            }
+        }
+
+        addLoadEvent(function() {
+            window.print();
+            /*
+             * @risk: Quick and Dirty
+             * Auto close after printing
+             */
+            setTimeout(function() {window.close()}, 100);
+        });
+    </script>
+</body>
+</html>

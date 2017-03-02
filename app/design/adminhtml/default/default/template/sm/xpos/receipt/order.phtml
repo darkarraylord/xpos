@@ -1,0 +1,27 @@
+<?php
+/*
+ * @var SM_XPos_Block_Adminhtml_XPos_Receipt_Order $this
+ */
+
+?>
+
+<div class="receipt-info">
+    <div class="container">
+        <div class="customer-info">
+            <span><?php echo $this->helper('xpos')->__('CUSTOMER') ?></span>
+            <span><strong><?php echo $this->getOrder()->getCustomerName(); ?> #<?php echo $this->getOrder()->getCustomerId(); ?></strong></span>
+        </div>
+        <div class="order">
+            <span><?php echo $this->helper('xpos')->__('ORDER') ?></span>
+            <span><strong>#<?php echo $this->getOrder()->getIncrementId(); ?></strong></span>
+        </div>
+        <?php if($this->getCashier()): ?>
+            <div class="cashier">
+                <span><?php echo $this->helper('xpos')->__('CASHIER') ?></span>
+                <span><?php echo $this->getCashier()->getName(); ?></span>
+            </div>
+        <?php endif; ?>
+    </div>
+    <?php $this->getChild('date')->setData("order", $this->getOrder()); ?>
+    <?php echo $this->getChildHtml('date', false); ?>
+</div>

@@ -1,0 +1,299 @@
+<script>
+    window.shippingObject = [];
+    for (var member in window.shippingObject) delete window.shippingObject[member];
+    var elementShipment = {};
+    var currentPriceShippingMethod = '';
+    var currentCodeShipment = '';
+</script>
+<script type="text/javascript">
+    var checkTypeCurrentShipping = typeof window.currentShippingPrice;
+    if (checkTypeCurrentShipping != 'number' && checkTypeCurrentShipping != 'string') {
+        window.currentShippingPrice = 0;
+    }
+    function setPriceShipping() {
+        var value = jQuery('#xpayment_pickup_shipping_xpayment_pickup_shipping_input_price').val();
+        if (!isNumber(value)) {
+            jQuery(this).val(0).focus();
+            return;
+        }
+        jQuery("#s_method_xpayment_pickup_shipping_xpayment_pickup_shipping").find('.price').html(formatCurrency(value, window.multiStoreView.priceFormat));
+
+        jQuery.each(window.shippingObject, function (k, v) {
+            if (v.code == 'xpayment_pickup_shipping_xpayment_pickup_shipping') {
+                v.price = value;
+            }
+        });
+        var grandTotalForShip = jQuery('#order_grandtotal').val();
+        var diff = 0;
+        if (window.currentShippingPrice == 0) {
+//            console.log('currentPrice = 0 will set = value:' + value );
+            window.currentShippingPrice = value;
+            diff = value;
+        } else {
+
+            diff = value - window.currentShippingPrice;
+//            console.log("diff: " + diff + " current value: " + window.currentShippingPrice + " value: "  + value);
+            window.currentShippingPrice = value;
+        }
+
+        grandTotalForShip = parseFloat(grandTotalForShip) + parseFloat(diff);
+        jQuery('#order_grandtotal').val(parseFloat(grandTotalForShip.toFixed(2)));
+        jQuery('#grandtotal').text(formatCurrency(grandTotalForShip.toFixed(2), priceFormat));
+        //update value
+        var payment_method = jQuery("#payment_method_hidden").val();
+        jQuery('#' + payment_method + '_input_price').val(grandTotalForShip.toFixed(2));
+        var balance = parseFloat(jQuery('#balance').val());
+        if (balance > 0) {
+            updateBalance();
+        } else {
+            jQuery('#cash-in').val(grandTotalForShip.toFixed(2));
+        }
+    }
+    jQuery(document).ready(function () {
+        jQuery(".shippingAmount").keydown(function (e) {
+            // if press Enter -> will blur
+            if (e.keyCode == 13) {
+                jQuery(this).blur();
+                return
+            }
+            // Allow: backspace, delete, tab, escape, enter and .
+            if (jQuery.inArray(e.keyCode, [46, 8, 9, 27, 110, 190]) !== -1 ||
+                    // Allow: Ctrl+A, Command+A
+                (e.keyCode == 65 && ( e.ctrlKey === true || e.metaKey === true ) ) ||
+                    // Allow: home, end, left, right, down, up
+                (e.keyCode >= 35 && e.keyCode <= 40)) {
+                // let it happen, don't do anything
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105) || e.keyCode == 190) {
+                e.preventDefault();
+//                delay(function () {
+                order.setShippingMethodSyn(code, title);
+//                }, 2000);
+            }
+        }).blur(function () {
+//            var method = jQuery(this).attr('methodCode');
+//            var methodInput = '#' + method + '_input_price';
+
+            var value = jQuery(this).val();
+            if (!isNumber(value)) {
+                jQuery(this).val(0).focus();
+                return;
+            }
+            setPriceShipping();
+            order.setShippingMethodSyn('xpayment_pickup_shipping_xpayment_pickup_shipping', 'Shipping');
+        });
+        // if selected shipping
+        if (window.currentShippingPrice > 0) {
+            var pickupInput = jQuery(".shippingAmount");
+            pickupInput.val(window.currentShippingPrice);
+            pickupInput.trigger('blur');
+        }
+    });
+    function select_shipping_method(shipping_code) {
+        //save method into local
+        setSelectedShipment(shipping_code);
+
+        var methodInputShipping = '#' + "xpayment_pickup_shipping_xpayment_pickup_shipping" + '_input_price';
+        if (shipping_code == "xpayment_pickup_shipping_xpayment_pickup_shipping") {
+            jQuery(methodInputShipping).show(200).prop('disabled', false);
+        } else {
+            jQuery("#xpayment_pickup_shipping_xpayment_pickup_shipping_input_price").hide(200);
+            //if use differ pickup set window.currentShippingPrice = 0;
+            window.currentShippingPrice = 0;
+        }
+        if (jQuery('#order_shipping_method_hidden').val() == shipping_code) {
+            return;
+        }
+        iLog('select Shiping Method');
+        jQuery(".shipping-method-item").removeClass('active');
+        jQuery("#s_method_" + shipping_code).addClass('active');
+        var grandTotalForShip = jQuery('#order_grandtotal').val();
+        var currentCode = jQuery('#order_shipping_method_hidden').val();
+        jQuery('#order_shipping_method_hidden').val(shipping_code);
+        var currentPrice = 0;
+        var changePrice = 0;
+        var diff = 0;
+        var balance = parseFloat(jQuery('#balance').val());
+        var cashIn = unFormatCurrency(jQuery('#cash-in').val(), priceFormat);
+//        console.log(window.shippingObject);
+        jQuery.each(window.shippingObject, function (key, value) {
+            if (value.code == currentCode) {
+                iLog('>> detect == currentcode ', currentCode);
+                iLog('>> current Price', value.price);
+                currentPrice = value.price;
+            }
+            if (value.code == shipping_code) {
+                iLog('>> detect == change shipping code ', shipping_code);
+                iLog('>> change Price', value.price);
+                changePrice = value.price;
+            }
+        });
+        diff = parseFloat(changePrice) - parseFloat(currentPrice);
+        grandTotalForShip = parseFloat(grandTotalForShip) + diff;
+        jQuery('#order_grandtotal').val(grandTotalForShip);
+        jQuery('#grandtotal').text(formatCurrency(grandTotalForShip.toFixed(2), priceFormat));
+        if (balance > 0) {
+            updateBalance();
+        } else {
+            jQuery('#cash-in').val(grandTotalForShip.toFixed(2));
+        }
+    }
+    function setSelectedShipment(code) {
+        localStorage.setItem('shipping_method_selected', code);
+    }
+
+</script>
+<?php
+$defaultShipping = Mage::helper('xpos/configXPOS')->getDefaultShipping();
+if (SM_XPos_Adminhtml_XposController::$_callFromControllerXpos == false) {
+    return;
+}
+$quote = Mage::getSingleton('adminhtml/session_quote')->getQuote();
+$quoteId = $quote->getId();
+if (!!$quoteId) {
+    if (!Mage::helper('xpos/configXPOS')->getOnlyUseDefaultShipping() && !$quote->isVirtual()) {
+        /*TODO: Important - Need Collect Shipping Rate*/
+        $quote->getShippingAddress()->setCollectShippingRates(true)->collectShippingRates();
+    }
+
+    $shippingMethod = Mage::getSingleton('adminhtml/session')->getSelectedShipmentMethod();
+    if (!$shippingMethod) {
+        $shippingAddress = $quote->getShippingAddress();
+        if (!!$defaultShipping) {
+            Mage::getSingleton('adminhtml/sales_order_create')->setShippingMethod($defaultShipping);
+        }
+    } else {
+        Mage::getSingleton('adminhtml/sales_order_create')->setShippingMethod($shippingMethod);
+    }
+    ?>
+    <?php
+    $session = Mage::getSingleton('adminhtml/session_quote');
+    if ($this->getActiveMethodRate()) {
+        $shippingMethod = $this->getActiveMethodRate()->getMethodTitle();
+    } else {
+        if (Mage::helper('xpos/configXPOS')->getOnlyUseDefaultShipping())
+            $shippingMethod = Mage::getModel('xpos/iayz')->getCurrentShippingTitle($defaultShipping);
+        else
+            $shippingMethod = 'No Shipping';
+    }
+    ?>
+    <script>
+        jQuery("#shipping_detail").html('<?php echo $shippingMethod; ?>');
+    </script>
+    <div id="order-shipping-method-choose">
+        <div class="shipment-methods">
+            <?php if ($_shippingRateGroups = $quote->getShippingAddress()->getGroupedAllShippingRates()) {
+                ?>
+                <!--{
+                code: xpayment_pickup_shipping-> rate:
+                freeshipping->
+                }-->
+                <?php foreach ($_shippingRateGroups as $code => $_rates) { ?>
+                <?php foreach ($_rates as $_rate) {
+                $_code = $_rate->getCode();/*full code shipping*/
+                ?>
+                <div
+                    onclick="if(!jQuery(event.target).is('input')){select_shipping_method('<?php echo($_code); ?>');syncShipping('<?php echo $_code ?>','<?php echo $_rate->getMethodTitle() ?>');}"
+                    id="s_method_<?php echo($_code); ?>"
+                    class="shipping-method-item checkout-item <?php if ($methodActive = $this->getActiveMethodRate()) {
+                        $methodActive = $methodActive->getMethod();
+                        $currentLoopMethod = $_rate->getMethod();
+                        if ($currentLoopMethod == $methodActive) {
+                            echo "active";
+                        }
+                    } ?>">
+
+                            <span
+                                onclick="/*select_shipping_method('<?php echo($_code); ?>');order.setShippingMethodSyn('<?php echo $_code ?>','<?php echo $_rate->getMethodTitle() ?>');*/">
+                                <?php echo $this->getCarrierName($code); ?> :
+                                <?php echo $_rate->getMethodTitle() ? $_rate->getMethodTitle() : $_rate->getMethodDescription() ?>
+                                -
+                                <?php
+                                /*get price not include cotainer(-)*/
+                                $inclNotContainer = $session->getQuote()->getStore()->convertPrice(
+                                    Mage::helper('tax')->getShippingPrice(
+                                        $_rate->getPrice(),
+                                        true,
+                                        $session->getQuote()->getShippingAddress(),
+                                        null,
+                                        //We should send exact quote store to prevent fetching default config for admin store.
+                                        $session->getQuote()->getShippingAddress()->getQuote()->getStore()
+                                    ),
+                                    false
+                                ); ?>
+                                <?php if ($this->helper('tax')->displayShippingPriceExcludingTax()): ?>
+                                    <?php echo $this->getShippingPrice($_rate->getPrice(), false); ?>
+                                <?php else: ?>
+                                    <?php echo $this->getShippingPrice($_rate->getPrice(), true) ?>
+                                <?php endif; ?>
+                                </span>
+                    <?php
+                    if ($_code == 'xpayment_pickup_shipping_xpayment_pickup_shipping') {
+                        ?>
+                        <input onclick="/*setPriceShipping()*/" id="<?php echo $_code ?>_input_price"
+                               name="shipment[<?php echo $_code ?>]"
+                               methodCode="<?php echo $_code ?>"
+                               class="shippingAmount splitPayment-css" width="15" type="number"
+                               style="width: 200px;display: none;font-size: 22px;font-weight: 600; overflow: hidden;padding: 0 30px; text-overflow: ellipsis;white-space: nowrap;"
+                               value="0" onchange="/*setPriceShipping()*/"
+                               min="0">
+                        <?php
+                    }
+                    ?>
+                </div>
+                <script>
+                    window.shippingObject.push({
+                        'code': '<?php echo $_code;  ?>',
+                        'price': '<?php echo $inclNotContainer;  ?>'
+                    });
+                </script>
+            <?php } ?>
+
+            <?php } ?>
+            <input type="hidden" value="<?php if ($_rate = $this->getActiveMethodRate()) {
+                echo $_rate->getCode();
+            } ?>" name="order[shipping_method]" id="order_shipping_method_hidden">
+
+
+            <?php } else {
+            if (!Mage::helper('xpos/configXPOS')->getOnlyUseDefaultShipping()){
+            ?>
+
+                <div class="shipping-method-item checkout-item active">
+                    <span><?php echo Mage::helper('sales')->__('No Shipping Methods') ?></span>
+                </div>
+
+
+            <?php } else {
+                $title = Mage::getModel('xpos/iayz')->getCurrentShippingTitle($defaultShipping);
+                ?>
+                <div
+                    onclick="if(!jQuery(event.target).is('input')){select_shipping_method('<?php echo($defaultShipping); ?>');syncShipping('<?php echo $defaultShipping ?>','<?php echo $title ?>');}"
+                    id="s_method_<?php echo($defaultShipping); ?>"
+                    class="shipping-method-item checkout-item active">
+                    <span><?php echo $title; ?></span>
+
+                    <?php if ($defaultShipping == 'xpayment_pickup_shipping_xpayment_pickup_shipping'): ?>
+                        <input onclick="/*setPriceShipping()*/" id="<?php echo $defaultShipping ?>_input_price"
+                               name="shipment[<?php echo $defaultShipping ?>]"
+                               methodCode="<?php echo $defaultShipping ?>"
+                               class="shippingAmount splitPayment-css" width="15" type="number"
+                               style="width: 200px;display: none;font-size: 22px;font-weight: 600; overflow: hidden;padding: 0 30px; text-overflow: ellipsis;white-space: nowrap;"
+                               value="0" onchange="/*setPriceShipping()*/"
+                               min="0">
+                    <?php endif ?>
+                </div>
+                <?php
+
+            }
+            } ?>
+
+        </div>
+    </div>
+
+
+    <?php
+}
+?>

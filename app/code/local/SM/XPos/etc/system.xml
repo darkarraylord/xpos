@@ -1,0 +1,1286 @@
+<?xml version="1.0"?>
+<config>
+    <tabs>
+        <smartosc translate="label">
+            <label><![CDATA[<div style="position: absolute;"><img id="smartosc_block" src="" alt="SMART OSC" border="0" /></div>&nbsp;
+            <script>
+            var n = SKIN_URL.indexOf("adminhtml");
+            $('smartosc_block').src = SKIN_URL.substring(0, n) + "adminhtml/default/default/sm/xpos/images/rsz_2logo.png";
+            </script>]]></label>
+            <sort_order>0</sort_order>
+        </smartosc>
+    </tabs>
+    <sections>
+        <xpos translate="label" module="xpos">
+            <label>X-POS</label>
+            <tab>sales</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>0</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+        </xpos>
+        <!--NEW CONFIG HERE-->
+        <xpos translate="label" module="xpos">
+            <label>X-POS</label>
+            <tab>smartosc</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>0</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+
+            <groups>
+                <general translate="label">
+                    <label>General</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>0</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
+                    <fields>
+                        <heading_general translate="label">
+                            <label>General</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </heading_general>
+                        <enabled translate="label">
+                            <label>Enable X-POS</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Enable X-POS extension.</comment>
+                        </enabled>
+                        <key translate="label">
+                            <label>License Key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment></comment>
+                        </key>
+                        <storeid translate="label">
+                            <label>Default store</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_store</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Set default Store View for X-POS. It can be switch to other when user opens X-POS.</comment>
+                        </storeid>
+
+                        <!--<shortcut_enable translate="label">--><!--<label>Enable shortcut</label>--><!--<frontend_type>select</frontend_type>--><!--<source_model>adminhtml/system_config_source_yesno</source_model>--><!--<sort_order>6</sort_order>--><!--<show_in_default>1</show_in_default>--><!--<show_in_website>0</show_in_website>--><!--<show_in_store>1</show_in_store>--><!--<comment>Enable shortcut key for X-POS</comment>--><!--</shortcut_enable>-->
+                        <last_check_update translate="label">
+                            <label>Last check update</label>
+                            <frontend_type>label</frontend_type>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Format day: mm/dd/yy</comment>
+                        </last_check_update>
+                        <last_save_setting translate="label">
+                            <label>Last change by</label>
+                            <frontend_type>label</frontend_type>
+                            <backend_model>xpos/adminhtml_system_config_backend_lastSaveSetting</backend_model>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </last_save_setting>
+
+                        <heading_offlinemod translate="label">
+                            <label>Offline Mode</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </heading_offlinemod>
+                        <offline_mode translate="label">
+                            <label>Create Order Offline</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Enable to allow X-POS working when Internet connection is lost. If it's enable, it would require cache of Product to work properly</comment>
+                        </offline_mode>
+                        <network_check_interval translate="label">
+                            <label>Network check interval</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>12</sort_order>
+                            <validate>validate-number</validate>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Interval between network check requests (in seconds)</comment>
+                            <depends>
+                                <offline_mode>1</offline_mode>
+                            </depends>
+                        </network_check_interval>
+
+                        <heading_warehouse translate="label">
+                            <label>Manage Warehouses and Tills</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </heading_warehouse>
+                        <integrate_xmwh_enabled translate="label">
+                            <label>Enable Multiple Warehouses</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/config_integrate</source_model>
+                            <sort_order>41</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Enable X-Multi-Warehouse functionality (Please note, that X-Multi-Warehouse is a separate extension)
+                            </comment>
+                        </integrate_xmwh_enabled>
+                        <enable_till translate="label">
+                            <label>Enable Tills</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>42</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Tills can be setup in Sales > POS > Manage Tills</comment>
+                        </enable_till>
+                        <heading_cashier translate="label">
+                            <label>Cashiers</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </heading_cashier>
+                        <enabled_cashier translate="label">
+                            <label>Enabled Cashiers</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>51</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Cashiers can be setup in Sales > POS > Manage Cashiers</comment>
+                        </enabled_cashier>
+                        <enabled_auto_logout translate="label">
+                            <label>Automatic logout</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>52</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enabled_cashier>1</enabled_cashier>
+                            </depends>
+                        </enabled_auto_logout>
+                        <login_time_out translate="label">
+                            <label>Login time-out</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>53</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>in seconds</comment>
+                            <depends>
+                                <enabled_cashier>1</enabled_cashier>
+                                <enabled_auto_logout>1</enabled_auto_logout>
+                            </depends>
+                        </login_time_out>
+                    </fields>
+                </general>
+                <xpos_mode translate="label">
+                    <label>Data Filter and Searching</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>0</expanded>
+                    <fields>
+
+                        <!--X-POS MODE-->
+                        <heading_xpos_mode translate="label">
+                            <label>Products and Customers Cache</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </heading_xpos_mode>
+
+                        <offlinesearch translate="label">
+                            <label>Cache of Product</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Set to "Enable" if you want to save product data in your browser and work in Offline Mode. Set to "Disable" if you just want X-POS work online</comment>
+                        </offlinesearch>
+                        <produc_load_type translate="label">
+                            <label>Product Loading Mechanism</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/adminhtml_system_config_sourceModel_typeLoad</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <offlinesearch>1</offlinesearch>
+                            </depends>
+                            <!--<comment>Performs better</comment>-->
+                        </produc_load_type>
+                        <prod_per_request translate="label">
+                            <label>Product per request</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/adminhtml_system_config_sourceModel_perRequestXPos</source_model>
+                            <validate>validate-select</validate>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Amount of product records per loading request</comment>
+                            <depends>
+                                <offlinesearch>1</offlinesearch>
+                            </depends>
+                        </prod_per_request>
+                        <offlinesearch_customer translate="label">
+                            <label>Cache of Customer</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Set to "Enable" if you want to save customer data in your browser and work in Offline Mode. Set to "Disable" if you just want X-POS work online</comment>
+                        </offlinesearch_customer>
+                        <cust_per_request translate="label">
+                            <label>Customer per request</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/adminhtml_system_config_sourceModel_perRequestXPos</source_model>
+                            <validate>validate-select</validate>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Amount of customer records per loading request</comment>
+                            <depends>
+                                <offlinesearch_customer>1</offlinesearch_customer>
+                            </depends>
+                        </cust_per_request>
+
+                        <!-- Filter Products Displayed in X-Pos -->
+                        <heading_filter_search translate="label">
+                            <label>Filter Products in X-POS</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </heading_filter_search>
+
+                        <searching_status translate="label">
+                            <label>Only enabled products</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>11</sort_order>
+                            <validate>validate-select</validate>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment></comment>
+                        </searching_status>
+                        <searching_product_types translate="label">
+                            <label>Product Type</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>xpos/config_producttypes</source_model>
+                            <sort_order>12</sort_order>
+                            <validate>validate-select</validate>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment></comment>
+                        </searching_product_types>
+                        <searching_by translate="label">
+                            <label>Fields used for searching</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>xpos/config_source</source_model>
+                            <sort_order>13</sort_order>
+                            <validate>validate-select</validate>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>The more items selected, the slower the search</comment>
+                        </searching_by>
+                        <searching_instock translate="label">
+                            <label>In Stock Products Only</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>14</sort_order>
+                            <validate>validate-select</validate>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment></comment>
+                        </searching_instock>
+                        <searching_product_visibility translate="label">
+                            <label>Visibility</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>xpos/config_productvisibility</source_model>
+                            <sort_order>15</sort_order>
+                            <validate>validate-select</validate>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment></comment>
+                        </searching_product_visibility>
+
+                        <!--Lucky Search-->
+                        <heading_search_result translate="label">
+                            <label>Search and Display</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </heading_search_result>
+                        <attribute_for_display translate="label">
+                            <label>Display additional attributes of product when mouse hovers</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>xpos/config_source</source_model>
+                            <sort_order>23</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                            <comment>The more items selected, the slower the load</comment>
+                        </attribute_for_display>
+                        <!--<lucky_search translate="label">-->
+                        <!--<label>Lucky search</label>-->
+                        <!--<frontend_type>select</frontend_type>-->
+                        <!--<source_model>adminhtml/system_config_source_enabledisable</source_model>-->
+                        <!--<sort_order>21</sort_order>-->
+                        <!--<show_in_default>1</show_in_default>-->
+                        <!--<show_in_website>0</show_in_website>-->
+                        <!--<show_in_store>1</show_in_store>-->
+                        <!--<comment>When only one result in search, it is added automatically to order</comment>-->
+                        <!--</lucky_search>-->
+                        <number_result translate="label">
+                            <label>Number of products displayed</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/adminhtml_system_config_sourceModel_numOfResultSearch</source_model>
+                            <backend_model>xpos/adminhtml_system_config_backend_numberResultSearch</backend_model>
+                            <sort_order>22</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-number</validate>
+                            <comment></comment>
+                        </number_result>
+                    </fields>
+                </xpos_mode>
+                <checkout translate="label">
+                    <label>Order Processing</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>2</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>0</expanded>
+                    <fields>
+                        <heading_xpos_guest translate="label">
+                            <label>Default Customer In X-POS</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </heading_xpos_guest>
+                        <enable_guest_checkout translate="label">
+                            <label>Allow Guest Check Out</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </enable_guest_checkout>
+
+                        <guest_select translate="button_label">
+                            <button_label>Select Customer</button_label>
+                            <frontend_model>xpos/adminhtml_config_frontend_selectcustomer</frontend_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable_guest_checkout>1</enable_guest_checkout>
+                            </depends>
+                        </guest_select>
+
+                        <default_customer_id translate="label">
+                            <label>Default Customer ID</label>
+                            <frontend_type>text</frontend_type>
+                            <backend_model>xpos/customer</backend_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>You can select the default customer ID faster by clicking on button below</comment>
+                            <depends>
+                                <enable_guest_checkout>1</enable_guest_checkout>
+                            </depends>
+                        </default_customer_id>
+                        <!--<guest_name translate="label">
+                            <label>Name</label>
+                            <frontend_type>label</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable_guest_checkout>1</enable_guest_checkout>
+                            </depends>
+                        </guest_name>
+                        <guest_email translate="label">
+                            <label>Email</label>
+                            <frontend_type>label</frontend_type>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </guest_email>
+                        <guest_telephone translate="label">
+                            <label>Telephone</label>
+                            <frontend_type>label</frontend_type>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </guest_telephone>
+                        <guest_country translate="label">
+                            <label>Countries</label>
+                            <frontend_type>label</frontend_type>
+                            <sort_order>8</sort_order>
+                            <validate>validate-select</validate>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </guest_country>
+                        <guest_state>
+                            <label>State/Province</label>
+                            <frontend_type>label</frontend_type>
+                            <sort_order>9</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </guest_state>
+                        <guest_website>
+                            <label>Website</label>
+                            <frontend_type>label</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </guest_website>-->
+
+
+                        <heading_processing translate="label">
+                            <label>Place Order</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </heading_processing>
+                        <!--<create_invoice_display translate="label">--><!--<label>Display create Invoice in POS</label>--><!--<frontend_type>select</frontend_type>--><!--<source_model>adminhtml/system_config_source_enabledisable</source_model>--><!--<sort_order>21</sort_order>--><!--<show_in_default>1</show_in_default>--><!--<show_in_website>0</show_in_website>--><!--<show_in_store>1</show_in_store>--><!--<comment>Set if possible to change setting in POS interface.</comment>--><!--</create_invoice_display>--><!--<create_shipment_display translate="label">--><!--<label>Display create Shipment in POS</label>--><!--<frontend_type>select</frontend_type>--><!--<source_model>adminhtml/system_config_source_enabledisable</source_model>--><!--<sort_order>22</sort_order>--><!--<show_in_default>1</show_in_default>--><!--<show_in_website>0</show_in_website>--><!--<show_in_store>1</show_in_store>--><!--<comment>Set if possible to change setting in POS interface.</comment>--><!--</create_shipment_display>-->
+                        <onfly_discount translate="label">
+                            <label>Change Item Price</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>22</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Enable custom price in X-POS.</comment>
+                        </onfly_discount>
+                        <create_invoice translate="label">
+                            <label>Create Invoice default</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>23</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Set if Invoice is default created on Checkout.</comment>
+                        </create_invoice>
+                        <create_shipment translate="label">
+                            <label>Create Shipment default</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>24</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Set if Shipping is default created on Checkout.</comment>
+                        </create_shipment>
+                        <default_payment translate="label">
+                            <label>Default Payment Method</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/config_defaultPayment</source_model>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </default_payment>
+                        <default_shipping translate="label">
+                            <label>Default Shipping Method</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/config_defaultShipping</source_model>
+                            <sort_order>26</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </default_shipping>
+                        <only_use_default_shipping translate="label">
+                            <label>Use only Default Shipping Method</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>27</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>X-POS will use the default shipping method to checkout, it will increase the speed while creating order</comment>
+                        </only_use_default_shipping>
+                        <heading_checkout translate="label">
+                            <label>Click Pay Button</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </heading_checkout>
+
+                        <!--<enable_display_shiping translate="label">
+                            <label>Display shipping method</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>32</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Work only in online mode.</comment>
+                        </enable_display_shiping>-->
+                        <checkoutcomfirm translate="label">
+                            <label>Confirm on Checkout</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>33</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Display prompt when user press Checkout button</comment>
+                        </checkoutcomfirm>
+                        <printcashtransfer translate="label">
+                            <label>Print on opening Cash Transfer</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>34</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>This function makes it possible to open a cash drawer through a receipt printer
+                            </comment>
+                        </printcashtransfer>
+                    </fields>
+                </checkout>
+                <receipt translate="label">
+                    <label>Receipt</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>3</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>0</expanded>
+                    <fields>
+                        <heading_receipt_content translate="label">
+                            <label>Printed Receipt</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </heading_receipt_content>
+                        <turn_on_print_receipt translate="label">
+                            <label>Print receipt default</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <default>1</default>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </turn_on_print_receipt>
+                        <font_type translate="label">
+                            <label>Font</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/config_receipt_fonts</source_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment></comment>
+                        </font_type>
+
+                        <logo_image_file translate="label"> <!-- Make up a field key -->
+                            <label>Symbol Image</label>
+                            <frontend_type>image</frontend_type>
+                            <!-- <backend_model>adminhtml/system_config_backend_image</backend_model> -->
+                            <backend_model>xpos/config_receipt_image</backend_model>
+                            <upload_dir config="system/filesystem/media" scope_info="1">receipt</upload_dir>
+                            <!-- would upload into media/upload dir -->
+                            <base_url type="media" scope_info="1">receipt</base_url>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>
+                                <![CDATA[Currently only supports <span style="color:red; font-weight:bold;">JPG, PNG, GIF</span> format.<br />]]>
+                            </comment>
+                        </logo_image_file>
+
+                        <logo_literal translate="label">
+                            <label>Literal Logo</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>GUIDE: Make a logo by literally inputting characters. It will be showed off if a logo image is not set.</comment>
+                        </logo_literal>
+
+                        <day_format translate="label">
+                            <label>Day Format</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/config_receipt_dateFormat</source_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>DEFAULT: 'm/d/Y'</comment>
+                        </day_format>
+
+                        <slogan_literal translate="label">
+                            <label>Header Text</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Your store's slogan. It will appear on the header of receipt</comment>
+                        </slogan_literal>
+
+                        <fore_message translate="label">
+                            <label>Footer Message</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>GUIDE: The place where you can say thank you to your customer, or conditions of a returning back.</comment>
+                        </fore_message>
+                        <fore_gift_message translate="label">
+                            <label>Gift Footer Message</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>9</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <comment>GUIDE: The place where you can say Conditions of a returning back.</comment>
+                        </fore_gift_message>
+
+                        <addition_fields_to_display translate="label">
+                            <label>Additional information to display in order sum-up</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>xpos/config_receipt_fields</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                            <comment></comment>
+                        </addition_fields_to_display>
+
+                        <info_separator translate="label">
+                            <label>Information Separator</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/config_receipt_informationSeparator</source_model>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                            <comment>Type of separator between information zones</comment>
+                        </info_separator>
+                        <hide_info_if_value_equal_zero>
+                            <label>Remove Discount, Shipping if they equal zero</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>12</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                        </hide_info_if_value_equal_zero>
+                        <!-- Alignment -->
+                        <heading_receipt_alignment translate="label">
+                            <label>Alignment</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>13</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </heading_receipt_alignment>
+
+                        <logo_html_alignment translate="label">
+                            <label>Logo</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/config_receipt_alignment</source_model>
+                            <sort_order>12</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Logo Area</comment>
+                        </logo_html_alignment>
+
+                        <store_info_html_alignment translate="label">
+                            <label>Store Information</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/config_receipt_alignment</source_model>
+                            <sort_order>13</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_store>1</show_in_store>
+                            <show_in_website>1</show_in_website>
+                            <comment>Store information area</comment>
+                        </store_info_html_alignment>
+
+                        <methods_html_alignment translate="label">
+                            <label>Shipping and Payment Methods</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/config_receipt_alignment</source_model>
+                            <sort_order>14</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_store>1</show_in_store>
+                            <show_in_website>1</show_in_website>
+                            <comment></comment>
+                        </methods_html_alignment>
+
+                        <receipt_preview translate="label">
+                            <label>Preview Before Save</label>
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>xpos/adminhtml_xPos_receipt_config_previewButton</frontend_model>
+                            <sort_order>15</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </receipt_preview>
+
+                        <heading_email_template translate="label">
+                            <label>Email Receipt</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>18</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </heading_email_template>
+                        <enabled>
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>19</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </enabled>
+                        <email_receipt>
+                            <label>Default Enable Email Receipt</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enabled>1</enabled>
+                            </depends>
+                        </email_receipt>
+                        <sender>
+                            <label>Email sender</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_identity</source_model>
+                            <sort_order>21</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enabled>1</enabled>
+                            </depends>
+                        </sender>
+                        <sales_template>
+                            <label>New Order Confirmation Template for Sales</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>22</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enabled>1</enabled>
+                            </depends>
+                        </sales_template>
+                        <sales_emails>
+                            <label>Send Order Email Copy To Sales</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>23</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Comma-separated.</comment>
+                            <depends>
+                                <enabled>1</enabled>
+                            </depends>
+                        </sales_emails>
+                        <customer_template>
+                            <label>New Order Confirmation Template for Customer</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>24</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment></comment>
+                            <depends>
+                                <enabled>1</enabled>
+                            </depends>
+                        </customer_template>
+                        <guest_template>
+                            <label>New Order Confirmation Template for Guest</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment></comment>
+                            <depends>
+                                <enabled>1</enabled>
+                            </depends>
+                        </guest_template>
+                        <copy_method translate="label">
+                            <label>Send Invoice Email Copy Method</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_method</source_model>
+                            <sort_order>26</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enabled>1</enabled>
+                            </depends>
+                        </copy_method>
+                    </fields>
+                </receipt>
+                <report translate="label">
+                    <label>Report</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>5</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>0</expanded>
+                    <fields>
+                        <enable_zreport>
+                            <label>Enable Till Report (Z-Report)</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </enable_zreport>
+
+                        <admin_zreport>
+                            <label>Only use for Cashier has "Admin" permission</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable_zreport>1</enable_zreport>
+                            </depends>
+                        </admin_zreport>
+
+                        <enable_xreport>
+                            <label>Enable Quick Report (X-Report)</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </enable_xreport>
+
+                        <admin_xreport>
+                            <label>Only use for Cashier has "Admin" permission</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable_xreport>1</enable_xreport>
+                            </depends>
+                        </admin_xreport>
+
+                        <enable_linkreport>
+                            <label>Link to POS report</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </enable_linkreport>
+
+                        <admin_linkreport>
+                            <label>Only use for Cashier has "Admin" permission</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable_linkreport>1</enable_linkreport>
+                            </depends>
+                        </admin_linkreport>
+
+                        <heading_search_result translate="label">
+                            <label>Z-Report settings</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </heading_search_result>
+
+                        <denomination>
+                            <label>Denomination</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/denomination</source_model>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select a pre-configured list of denominations for use in Till report on counting cash.</comment>
+                        </denomination>
+
+                        <custom_denomi translate="label">
+                            <label>Custom Denomination</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>9</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Saperate by comma. Ex: 1 cent : 0.01, $5 note : 5,...</comment>
+                            <depends>
+                                <denomination>0</denomination>
+                            </depends>
+                        </custom_denomi>
+
+                        <default_transfer translate="label">
+                            <label>Default Transfer Money</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Default amount placed in till upon closing a till. Amount can be modified when creating till report.</comment>
+                        </default_transfer>
+
+                    </fields>
+                </report>
+                <customize translate="label">
+                    <label>X-POS Layout</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>6</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>0</expanded>
+                    <fields>
+                        <logo translate="label">
+                            <label>Main Logo</label>
+                            <frontend_type>image</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_image</backend_model>
+                            <upload_dir config="system/filesystem/media" scope_info="1">xpos</upload_dir>
+                            <base_url type="media" scope_info="1">xpos</base_url>
+                            <comment>Recommended size: width 124px and height 60px.</comment>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </logo>
+                        <color_banner translate="label">
+                            <label>Colour Banner</label>
+                            <frontend_type>text</frontend_type>
+                            <validate>color</validate>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment></comment>
+                        </color_banner>
+                        <color_text translate="label">
+                            <label>Colour Text</label>
+                            <frontend_type>text</frontend_type>
+                            <validate>color</validate>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment></comment>
+                        </color_text>
+                        <color_icon translate="label">
+                            <label>Colour Icon</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/config_iconcolor</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment></comment>
+                        </color_icon>
+
+                    </fields>
+                </customize>
+                <cronJob translate='label'>
+
+                    <label>Cron job update Product Data Schedule</label>
+                    <sort_order>7</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <!--<comment>Optimized caching, remove unused data to increase speed of updating products</comment>-->
+                    <expanded>0</expanded>
+                    <fields>
+                        <heading_cron translate="label">
+                            <label>Cronjob</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Optimized caching, remove unused data to increase speed of updating products</comment>
+                        </heading_cron>
+                        <enable_cron_load_product translate="label">
+                            <label>Cron job for updating product data</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </enable_cron_load_product>
+                        <time translate="label">
+                            <label>Start Time (Server Time)</label>
+                            <frontend_type>time</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable_cron_load_product>1</enable_cron_load_product>
+                            </depends>
+                        </time>
+                        <frequency translate="label">
+                            <label>Frequency</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_cron_frequency</source_model>
+                            <backend_model>xpos/adminhtml_system_config_backend_loadProductCron</backend_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable_cron_load_product>1</enable_cron_load_product>
+                            </depends>
+                        </frequency>
+                        <store_run translate="label">
+                            <label>Store(s) used for load</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>xpos/config_sourceStore</source_model>
+                            <sort_order>2</sort_order>
+                            <validate>validate-select</validate>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>The more items selected, the slower the load</comment>
+                            <depends>
+                                <enable_cron_load_product>1</enable_cron_load_product>
+                            </depends>
+                        </store_run>
+                        <time_stop>
+                            <label>Max Execution Time</label>
+                            <frontend_type>text</frontend_type>
+                            <validate>validate-number</validate>
+                            <sort_order>21</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Max Execution Time in minutes</comment>
+                            <depends>
+                                <enable_cron_load_product>1</enable_cron_load_product>
+                            </depends>
+                        </time_stop>
+
+                    </fields>
+                </cronJob>
+                <custom_sales translate="label">
+                    <label>Custom Sales For X-POS</label>
+                    <sort_order>8</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <!--<comment>Optimized caching, remove unused data to increase speed of updating products</comment>-->
+                    <expanded>0</expanded>
+                    <fields>
+                        <enabled translate="label">
+                            <label>Enable</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Enable Custom Sales.</comment>
+                        </enabled>
+                        <tax_class translate="label">
+                            <label>Tax Class<![CDATA[
+<span style="color:red; font-weight:bold;">*</span>
+                            ]]></label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/adminhtml_system_config_sourceModel_taxclass</source_model>
+                            <backend_model>xpos/adminhtml_system_config_backend_taxClass</backend_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enabled>1</enabled>
+                                <ship_able>1</ship_able>
+                            </depends>
+                        </tax_class>
+                        <ship_able translate="label">
+                            <label>Product can be shipped</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <backend_model>xpos/adminhtml_system_config_backend_shipable</backend_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enabled>1</enabled>
+                            </depends>
+                        </ship_able>
+                    </fields>
+                </custom_sales>
+                <integrates translate="label">
+                    <label>Integrate with X-POS</label>
+                    <sort_order>9</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <!--<comment>Optimized caching, remove unused data to increase speed of updating products</comment>-->
+                    <expanded>0</expanded>
+
+                    <fields>
+                        <heading_integrate translate="label">
+                            <label>Integrate</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Optimized caching, remove unused data to increase speed of updating products</comment>
+                        </heading_integrate>
+                        <giftt_card_integrate>
+                            <label>Integrate with Giftcard</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/adminhtml_system_config_sourceModel_giftCardIntegrate</source_model>
+                            <sort_order>32</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </giftt_card_integrate>
+                        <reward_points_integrate>
+                            <label>Integrate with Rewardpoints</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>xpos/adminhtml_system_config_sourceModel_rewardPointIntegrate</source_model>
+                            <sort_order>33</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </reward_points_integrate>
+                    </fields>
+                </integrates>
+                <contact translate="label">
+                    <label>Contact SmartOSC</label>
+                    <frontend_type>text</frontend_type>
+                    <frontend_model>xpos/adminhtml_config_frontend_contact</frontend_model>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
+                </contact>
+            </groups>
+        </xpos>
+
+        <!--END NEW CONFIG-->
+        <payment>
+            <groups>
+                <authorizenet>
+                    <fields>
+                        <card_present translate="label">
+                            <label>Card Present</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </card_present>
+                    </fields>
+                    <fields>
+                        <cgi_url>
+                            <label>Gateway URL</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cgi_url>
+                    </fields>
+                </authorizenet>
+            </groups>
+        </payment>
+    </sections>
+</config>

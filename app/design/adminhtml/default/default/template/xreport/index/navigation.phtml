@@ -1,0 +1,105 @@
+<?php
+/**
+ * Created by IntelliJ IDEA.
+ * User: vjcspy
+ * Date: 10/20/15
+ * Time: 5:06 PM
+ */
+?>
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-static-top .visible-xs-block, hidden-xsa" role="navigation"
+     style="margin-bottom: 0;">
+    <div class="navbar-header">
+        <button type="button" onclick="reSetNavIfMobile()" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <div class="toggle-nav">
+            <div class="icon-reorder tooltips" data-original-title="Toggle Navigation" data-placement="bottom"><i
+                    class="fa fa-bars"></i></div>
+        </div>
+        <a class="navbar-brand"
+           href='<?php echo Mage::helper("adminhtml")->getUrl("xreport/view/index", array('_nosid' => true)); ?>'
+           style="font-size: 25px;color: royalblue;margin-left: 15px">X-Report
+            <abeta style="font-size: 9px;padding-bottom: 5px">beta</abeta>
+        </a>
+    </div>
+    <!-- /.navbar-header -->
+
+    <?php //echo $this->getChildHtml('top_link'); ?>
+
+    <div class="navbar-default sidebar" role="navigation"
+         ng-init='switchStore.currentStore="<?php $storeId = Mage::getSingleton('xreport/session')->getData('store_id');
+         if ($storeId == 0 || is_null($storeId))
+             echo '';
+         else
+             echo $storeId; ?>"'>
+        <div class="sidebar-nav navbar-collapse">
+            <ul class="nav" id="side-menu">
+                <li class="sidebar-search">
+                    <div class="input-group custom-search-form">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <?php echo $this->getChildHtml('store_switcher'); ?>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /input-group -->
+                </li>
+                <li class="na_xreport">
+                    <a href='<?php echo Mage::helper("adminhtml")->getUrl("xreport/view/index", array('_nosid' => true)); ?>
+        '><i
+                            class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                </li>
+                <li id="na_sales" class="na_xreport">
+                    <a href="#"><i class="fa fa-sitemap fa-fw"></i> Sales<span
+                            class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li id="na_history">
+                            <a href='<?php echo Mage::helper("adminhtml")->getUrl("xreport/sales/viewHistory", array('_nosid' => true)); ?>'>History
+                                Reports</a>
+                        </li>
+                        <li>
+                            <a href="<?php echo Mage::helper("adminhtml")->getUrl("xreport/sales/viewDetail", array('_nosid' => true)); ?>">Advanced
+                                Reports</a>
+                        </li>
+                        <li>
+                            <a href="<?php echo Mage::helper("adminhtml")->getUrl("xreport/sales/viewInventory", array('_nosid' => true)); ?>">Inventory
+                                Reports</a>
+                        </li>
+                    </ul>
+                    <!-- /.nav-second-level -->
+                </li>
+            </ul>
+        </div>
+        <!-- /.sidebar-collapse -->
+    </div>
+    <!-- /.navbar-static-side -->
+</nav>
+<script>
+    function reSetNavIfMobile() {
+        var is_mobile = false;
+
+        if ($('.toggle-nav').css('display') == 'none') {
+            is_mobile = true;
+        }
+
+        // now i can use is_mobile to run javascript conditionally
+
+        if (is_mobile == true) {
+            //Conditional script here
+
+            console.log('abc');
+            jQuery('#page-wrapper').css({
+                'margin-left': '0px !important'
+            });
+            jQuery('.sidebar ul').show();
+            jQuery('.sidebar').addClass('animated fadeInLeft').css({
+                'margin-left': '0'
+            });
+            jQuery("#container").removeClass("sidebar-closed");
+        }
+    }
+</script>

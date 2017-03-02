@@ -1,0 +1,676 @@
+<?php
+$_fieldsContainerId = 'order-shipping_address_fields';
+$_countries = Mage::getResourceModel('directory/country_collection')
+    ->loadData()
+    ->toOptionArray(false);
+
+$params = $this->getRequest()->getParams();
+if (isset($params['order_id'])) {
+    $order = Mage::getModel('sales/order')->load($params['order_id']);
+    $shippingAddress = $order->getShippingAddress();
+    $billingAddress = $order->getBillingAddress();
+    if (!empty($shippingAddress)) {
+        $shippingInfo = $order->getShippingAddress()->getData();
+    }
+    if (!empty($billingAddress)) {
+        $billingInfo = $billingAddress->getData();
+    }
+    $customer = Mage::getModel('customer/customer')->load($order['customer_id'])->getData();
+}
+
+?>
+
+<!--change customer default-->
+<?php
+$customerDefaultToChange = Mage::getModel('xpos/guest')->getDefaultCustomer();
+//?>
+<ul id="ul_change_customer_guest" style="display: none">
+    <li style="display: none;" id="change_customer_guest"
+        street_line="<?php echo $this->helper('customer/address')->getStreetLines() ?>"
+        id_customer="<?php echo $customerDefaultToChange['account']['id'] ?>"
+        type="<?php echo $customerDefaultToChange['account']['type'] ?>"
+        shipping_telephone="<?php echo $customerDefaultToChange['shipping_address']['telephone'] ?>"
+        shipping_postcode="<?php echo $customerDefaultToChange['shipping_address']['postcode'] ?>"
+        shipping_region_id="<?php echo $customerDefaultToChange['shipping_address']['region_id'] ?>"
+        shipping_region="<?php echo $customerDefaultToChange['shipping_address']['region'] ?>"
+        shipping_country_id="<?php echo $customerDefaultToChange['shipping_address']['country_id'] ?>"
+        shipping_street="<?php echo $customerDefaultToChange['shipping_address']['street'] ?>"
+        shipping_city="<?php echo $customerDefaultToChange['shipping_address']['city'] ?>"
+        shipping_lastname="<?php echo $customerDefaultToChange['shipping_address']['lastname'] ?>"
+        shipping_firstname="<?php echo $customerDefaultToChange['shipping_address']['firstname'] ?>"
+        billing_telephone="<?php echo $customerDefaultToChange['billing_address']['telephone'] ?>"
+        billing_city="<?php echo $customerDefaultToChange['billing_address']['city'] ?>"
+        billing_country_id="<?php echo $customerDefaultToChange['billing_address']['country_id'] ?>"
+        billing_postcode="<?php echo $customerDefaultToChange['billing_address']['postcode'] ?>"
+        billing_region_id="<?php echo $customerDefaultToChange['billing_address']['region_id'] ?>"
+        billing_region="<?php echo $customerDefaultToChange['billing_address']['region'] ?>"
+        billing_street="<?php echo $customerDefaultToChange['billing_address']['street'] ?>"
+        city="<?php echo $customerDefaultToChange['shipping_address']['city'] ?>"
+        country_id="<?php echo $customerDefaultToChange['shipping_address']['country_id'] ?>"
+        postcode="<?php echo $customerDefaultToChange['shipping_address']['postcode'] ?>"
+        region_id="<?php echo $customerDefaultToChange['shipping_address']['region_id'] ?>"
+        region="<?php echo $customerDefaultToChange['shipping_address']['region'] ?>"
+        street="<?php echo $customerDefaultToChange['shipping_address']['street'][0] ?>"
+        lastname="<?php echo $customerDefaultToChange['shipping_address']['lastname'] ?>"
+        firstname="<?php echo $customerDefaultToChange['shipping_address']['firstname'] ?>"
+        telephone="<?php echo $customerDefaultToChange['shipping_address']['telephone'] ?>"
+        email="<?php echo $customerDefaultToChange['account']['email'] ?>" desc=""
+        name="<?php echo $customerDefaultToChange['shipping_address']['firstname'] . ' ' . $customerDefaultToChange['shipping_address']['lastname'] ?>"
+        label="<?php echo($customerDefaultToChange['shipping_address']['firstname'] . $customerDefaultToChange['shipping_address']['lastname'] . $customerDefaultToChange['shipping_address']['telephone'] . $customerDefaultToChange['account']['email']) ?>"
+        onclick="getCustomerSelectionId(this)"></li>
+</ul>
+<!--end change customer default-->
+
+<input type="hidden" name="order[account][group_id]" id="customer_group"
+       value="<?php if (isset($order['customer_id'])) {
+           echo $customer['group_id'];
+       } else {
+           echo 1;
+       } ?>"/>
+<input type="hidden" name="order[account][type]" id="customer_type" value="<?php if (isset($order['customer_id'])) {
+    echo "exist";
+} else {
+    echo "guest";
+} ?>"/>
+
+<div id="customer_account_fields">
+
+    <!-- billing address-->
+    <div class="box-left" style="margin-top: 7px;" id="billing-details">
+        <fieldset class="np">
+            <input type="checkbox" id="order-billing_same_as_billing" name="billing_same_as_billing"
+                   onchange="enableBilling(this);" value="1" checked="checked"/>
+            <label for="order-billing_same_as_billing"
+                   class="no-float"><?php echo $this->__("Billing Address") ?></label>
+
+            <div class="order-address" id="billing-<?php echo $_fieldsContainerId ?>">
+                <div class="content" id="order-billing-address-content" style="display: none; position: relative;">
+                    <div style="position:absolute; width: 100%; height:100%; top:0; left:0;display:block;"
+                         id="billing-overlay">&nbsp;</div>
+                    <select id="customer_billing_address_list" style="width:97.5%;"
+                            onchange="switchBillingAddress(this)">
+                    </select>
+
+                    <p><a href="#clear" id="clear_billing_address"><?php echo $this->__("Clear") ?></a></p>
+                    <input name="order[billing_address][firstname]" type="text"
+                           placeholder="<?php echo $this->__('First Name'); ?>"
+                           class="input-text block notrequired-entry"
+                           id="order-billing_address_address_firstname"
+                           value="<?php echo isset($billingInfo['firstname']) ? $billingInfo['firstname'] : ''; ?>">
+                    <input name="order[account][gender]" type="hidden" value="123">
+                    </input>
+
+
+                    <input id="order-billing_address_address_lastname" name="order[billing_address][lastname]"
+                           type="text"
+                           placeholder="<?php echo $this->__('Last Name'); ?>"
+                           class="input-text block notrequired-entry"
+                           value="<?php echo isset($billingInfo['lastname']) ? $billingInfo['lastname'] : ''; ?>">
+
+                    <input id="order-billing_address_address_street0" name="order[billing_address][street][0]"
+                           type="text"
+                           placeholder="<?php echo $this->__('Street'); ?>"
+                           class="input-text block notrequired-entry"
+                           value="<?php echo isset($billingInfo['street']) ? $billingInfo['street'] : ''; ?>">
+
+                    <input id="order-billing_address_address_city" name="order[billing_address][city]"
+                           placeholder="<?php echo $this->__('City'); ?>"
+                           type="text"
+                           class="input-text block notrequired-entry"
+                           value="<?php echo isset($billingInfo['city']) ? $billingInfo['city'] : ''; ?>">
+
+                    <select id="order-billing_address_address_country_id" class=" notrequired-entry select"
+                            name="order[billing_address][country_id]" id="order-billing_address_country_id"
+                            onChange="clearBillingRegion()">
+
+                        <?php if (count($_countries) > 0): ?>
+                            <option value="">-- Please Select --</option>
+                            <?php foreach ($_countries as $_country): ?>
+                                <option
+                                    value="<?php echo $_country['value'] ?>" <?php if ($_country['value'] == (isset($billingInfo['country_id']) ? $billingInfo['country_id'] : '')): ?> selected <?php endif ?>>
+                                    <?php echo $_country['label'] ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+
+                    <select id="order-billing_address_address_region_id" name="order[billing_address][region_id]"
+                            title="<?php echo $this->__('State/Province') ?>" class="validate-select mod-select"
+                            style="display:none;"
+                        >
+                        <option value="0"><?php echo $this->__('Please select region, state or province') ?></option>
+                    </select>
+
+                    <select id="order-billing_address_address_region_virtual" onchange="updateBillingVirtual();"
+                            name="order[billing_address][region_virtual]"
+                            title="<?php echo $this->__('State/Province') ?>"
+                            class="validate-select mod-select" style="display:none;">
+                    </select>
+
+                    <input id="order-billing_address_address_region" name="order[billing_address][region]"
+                           type="text"
+                           style="display: none !important;"
+                           placeholder="<?php echo $this->__('Region'); ?>"
+                           class="input-text notrequired-entry mod-select"
+                           value="<?php echo isset($billingInfo['region']) ? $billingInfo['region'] : ''; ?>">
+
+                    <input id="order-billing_address_address_postcode" name="order[billing_address][postcode]"
+                           type="text"
+                           placeholder="<?php echo $this->__('Post Code'); ?>"
+                           class="input-text block notrequired-entry"
+                           value="<?php echo isset($billingInfo['postcode']) ? $billingInfo['postcode'] : ''; ?>">
+
+                    <input id="order-billing_address_address_telephone"
+                           placeholder="<?php echo $this->__('Telephone'); ?>"
+                           name="order[billing_address][telephone]" type="text"
+                           class="input-text block notrequired-entry"
+                           value="<?php echo isset($billingInfo['telephone']) ? $billingInfo['telephone'] : ''; ?>">
+
+                    <!-- This strict the region load event -->
+                    <label class="required">
+                        <span class="required"></span>
+                    </label>
+
+                </div>
+            </div>
+
+        </fieldset>
+    </div>
+    <!--End billing address-->
+
+    <!--Shipping address-->
+    <div class="box-right" style=" margin-top: 7px;" id="shipping-details">
+        <fieldset class="np">
+            <input type="checkbox" id="order-shipping_same_as_billing" name="shipping_same_as_billing"
+                   onchange="enableShipping(this);" checked/>
+            <label for="order-shipping_same_as_billing"
+                   class="no-float"><?php echo $this->__('Shipping Address'); ?></label>
+
+            <div class="order-address" id="<?php echo $_fieldsContainerId ?>">
+                <div class="content" id="order-address-content" style="display: none;position: relative;">
+                    <div style="position:absolute; width: 100%; height:100%; top:0; left:0;display:block;"
+                         id="shipping-overlay">&nbsp;</div>
+                    <select id="customer_shipping_address_list" style="width:97.5%;"
+                            onchange="switchShippingAddress(this)">
+                    </select>
+
+                    <p><a href="#copy-from-billing"
+                          id="copy-from-billing-address"><?php echo $this->__('Same as'); ?></a> | <a
+                            href="#clear" id="clear_shipping_address"><?php echo $this->__('Clear'); ?></a></p>
+
+                    <input name="order[shipping_address][firstname]" type="text"
+                           placeholder="<?php echo $this->__('First Name'); ?>"
+                           class="input-text block notrequired-entry"
+                           id="order-shipping_address_address_firstname"
+                           value="<?php echo isset($shippingInfo['firstname']) ? $shippingInfo['firstname'] : ''; ?>">
+                    <input id="order-shipping_address_address_lastname" name="order[shipping_address][lastname]"
+                           placeholder="<?php echo $this->__('Last Name'); ?>"
+                           type="text"
+                           class="input-text block notrequired-entry"
+                           value="<?php echo isset($shippingInfo['lastname']) ? $shippingInfo['lastname'] : ''; ?>">
+
+                    <input id="order-shipping_address_address_street0" name="order[shipping_address][street][0]"
+                           placeholder="<?php echo $this->__('Street'); ?>"
+                           type="text"
+                           class="input-text block notrequired-entry"
+                           value="<?php echo isset($shippingInfo['street']) ? $shippingInfo['street'] : ''; ?>">
+
+                    <input id="order-shipping_address_address_city" name="order[shipping_address][city]"
+                           type="text"
+                           placeholder="<?php echo $this->__('City'); ?>"
+                           class="input-text block notrequired-entry"
+                           value="<?php echo isset($shippingInfo['city']) ? $shippingInfo['city'] : ''; ?>">
+
+                    <select id="order-shipping_address_address_country_id" class=" notrequired-entry select"
+                            name="order[shipping_address][country_id]" id="order-shipping_address_country_id"
+                            onChange="clearShippingRegion()">
+
+                        <?php if (count($_countries) > 0): ?>
+                            <option value="">-- Please Select --</option>
+                            <?php foreach ($_countries as $_country): ?>
+                                <option
+                                    value="<?php echo $_country['value'] ?>" <?php if ($_country['value'] == (isset($shippingInfo['country_id']) ? $shippingInfo['country_id'] : '')): ?> selected <?php endif ?>>
+                                    <?php echo $_country['label'] ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+
+                    <select id="order-shipping_address_address_region_id" name="order[shipping_address][region_id]"
+                            title="<?php echo $this->__('State/Province') ?>" class="validate-select mod-select"
+                            style="display:none;"
+                        >
+                        <option value="0"><?php echo $this->__('Please select region, state or province') ?></option>
+                    </select>
+
+                    <select id="order-shipping_address_address_region_virtual" onchange="updateVirtual();"
+                            name="order[shipping_address][region_virtual]"
+                            title="<?php echo $this->__('State/Province') ?>"
+                            class="validate-select mod-select" style="display:none;">
+                    </select>
+
+                    <input id="order-shipping_address_address_region" name="order[shipping_address][region]"
+                           type="text"
+                           style="display:none  !important;"
+                           placeholder="<?php echo $this->__('Region'); ?>"
+                           class="input-text notrequired-entry mod-select"
+                           value="<?php echo isset($shippingInfo['region']) ? $shippingInfo['region'] : ''; ?>">
+
+                    <input id="order-shipping_address_address_postcode" name="order[shipping_address][postcode]"
+                           type="text"
+                           placeholder="<?php echo $this->__('Post code'); ?>"
+                           class="input-text block notrequired-entry"
+                           value="<?php echo isset($shippingInfo['postcode']) ? $shippingInfo['postcode'] : ''; ?>">
+
+                    <input id="order-shipping_address_address_telephone"
+                           placeholder="<?php echo $this->__('Telephone'); ?>"
+                           name="order[shipping_address][telephone]" type="text"
+                           class="input-text block notrequired-entry"
+                           value="<?php echo isset($shippingInfo['telephone']) ? $shippingInfo['telephone'] : ''; ?>">
+
+                    <!-- This strict the region load event -->
+                    <label class="required">
+                        <span class="required"></span>
+                    </label>
+                </div>
+            </div>
+
+        </fieldset>
+
+    </div>
+    <div class="clear"></div>
+    <!--End shipping address-->
+
+</div>
+
+<script type="text/javascript">
+
+    var guest_defaultname = '<?php echo Mage::getStoreConfig('xpos/guest/guest_name') ?>';
+    guest_defaultname = guest_defaultname.split(" ");
+    var guest_firstname = guest_defaultname[0];
+    var guest_lastname = '';
+    for (var i = 1; i < guest_defaultname.length; i++) {
+        guest_lastname = guest_lastname + " " + guest_defaultname[i];
+    }
+    guest_lastname = jQuery.trim(guest_lastname);
+    if (guest_lastname == '') {
+        guest_lastname = 'Guest';
+    }
+
+    var defaultAddress = {
+        'firstname': document.getElementById('change_customer_guest').getAttribute('firstname'),
+        'lastname': document.getElementById('change_customer_guest').getAttribute('lastname'),
+        'street': document.getElementById('change_customer_guest').getAttribute('street'),
+        'billing_street': document.getElementById('change_customer_guest').getAttribute('billing_street'),
+        'city': document.getElementById('change_customer_guest').getAttribute('city'),
+        'country_id': document.getElementById('change_customer_guest').getAttribute('country_id'),
+        'region': document.getElementById('change_customer_guest').getAttribute('region'),
+        'region_id': document.getElementById('change_customer_guest').getAttribute('billing_region_id'),
+        'postcode': document.getElementById('change_customer_guest').getAttribute('postcode'),
+        'telephone': document.getElementById('change_customer_guest').getAttribute('telephone'),
+
+        'shipping_firstname': document.getElementById('change_customer_guest').getAttribute('shipping_firstname'),
+        'shipping_lastname': document.getElementById('change_customer_guest').getAttribute('shipping_lastname'),
+        'shipping_city': document.getElementById('change_customer_guest').getAttribute('shipping_city'),
+        'shipping_street': document.getElementById('change_customer_guest').getAttribute('shipping_street'),
+        'shipping_country_id': document.getElementById('change_customer_guest').getAttribute('shipping_country_id'),
+        'shipping_region': document.getElementById('change_customer_guest').getAttribute('shipping_region'),
+        'shipping_region_id': document.getElementById('change_customer_guest').getAttribute('shipping_region_id'),
+        'shipping_postcode': document.getElementById('change_customer_guest').getAttribute('shipping_postcode'),
+        'shipping_telephone': document.getElementById('change_customer_guest').getAttribute('shipping_telephone')
+    };
+
+    var existAddress = defaultAddress;
+    function passAddress(addressCusCount, data, tag) {
+        tag.empty();
+        tag.append(jQuery('<option>', {
+            value: -1,
+            text: "Add new"
+        }));
+        for (var i = 0; i < addressCusCount; i++) {
+            tag.append(jQuery('<option>', {
+                value: i,
+                text: data[i].street
+            }));
+            var optionTag = '#' + tag.attr('id') + ' option[value=' + i + ']';
+            jQuery(optionTag)
+                .attr('firstname', data[i].firstname)
+                .attr('lastname', data[i].lastname)
+                .attr('street', data[i].street)
+                .attr('city', data[i].city)
+                .attr('country_id', data[i].country_id)
+                .attr('region', data[i].region)
+                .attr('region_id', data[i].region_id)
+                .attr('postcode', data[i].postcode)
+                .attr('telephone', data[i].telephone)
+//                .attr('company', data[i].company)
+            ;
+        }
+    }
+    function setAdd(arr, update) {
+
+        if (jQuery('input[name="order[account][type]"]').val() == 'new' || jQuery('input[name="order[account][type]"]').val() == 'guest' || true) {
+            var addressCusCount = arr.addressCusCount;
+            var selectBilling = jQuery('#customer_billing_address_list');
+            var selectShipping = jQuery('#customer_shipping_address_list');
+            passAddress(addressCusCount, arr, selectBilling);
+            passAddress(addressCusCount, arr, selectShipping);
+
+            jQuery('#order-shipping_address_address_firstname').val(arr.shipping_firstname);
+            jQuery('#order-shipping_address_address_lastname').val(arr.shipping_lastname);
+            jQuery('#order-shipping_address_address_street0').val(arr.shipping_street);
+            jQuery('#order-shipping_address_address_country_id').val(arr.shipping_country_id);
+            shippingRegionUpdater.update();
+            jQuery('#order-shipping_address_address_city').val(arr.shipping_city);
+            jQuery('#order-shipping_address_address_region').val(arr.shipping_region);
+            jQuery('#order-shipping_address_address_region_id').val(arr.shipping_region_id);
+            jQuery('#order-shipping_address_address_postcode').val(arr.shipping_postcode);
+            jQuery('#order-shipping_address_address_telephone').val(arr.shipping_telephone);
+
+            setTimeout(function () {
+                jQuery.uniform.update()
+                if (jQuery('#order-shipping_address_address_region_id').is(":disabled")) {
+                    jQuery('#uniform-order-shipping_address_address_region_id').hide('slow');
+                } else {
+                    jQuery('#uniform-order-shipping_address_address_region_id').show('slow');
+                }
+            }, 10);
+
+            jQuery('#order-billing_address_address_firstname').val(arr.firstname);
+            jQuery('#order-billing_address_address_lastname').val(arr.lastname);
+            jQuery('#order-billing_address_address_street0').val(arr.billing_street);
+            jQuery('#order-billing_address_address_country_id').val(arr.country_id);
+            billingRegionUpdater.update();
+            jQuery('#order-billing_address_address_city').val(arr.city);
+            jQuery('#order-billing_address_address_region').val(arr.region);
+            jQuery('#order-billing_address_address_region_id').val(arr.region_id);
+            jQuery('#order-billing_address_address_postcode').val(arr.postcode);
+            jQuery('#order-billing_address_address_telephone').val(arr.telephone);
+
+            setTimeout(function () {
+                jQuery.uniform.update()
+                if (jQuery('#order-billing_address_address_region_id').is(":disabled")) {
+                    jQuery('#uniform-order-billing_address_address_region_id').hide('slow');
+                } else {
+                    jQuery('#uniform-order-billing_address_address_region_id').show('slow');
+                }
+            }, 10);
+        }
+        if (update && flag_reload_page) {
+            updateShippingRates();
+        }
+    }
+
+    function changeAddress() {
+        var newAddress = {
+            'firstname': jQuery('#order-shipping_address_address_firstname').val() != '' ? jQuery('#order-shipping_address_address_firstname').val() : 'Guest',
+            'lastname': jQuery('#order-shipping_address_address_lastname').val() != '' ? jQuery('#order-shipping_address_address_lastname').val() : 'Guest',
+            'street': jQuery('#order-shipping_address_address_street0').val() != '' ? jQuery('#order-shipping_address_address_street0').val() : '<?php echo Mage::getStoreConfig('xpos/guest/guest_street') ?>',
+            'city': jQuery('#order-shipping_address_address_city').val() != '' ? jQuery('#order-shipping_address_address_city').val() : '<?php echo Mage::getStoreConfig('xpos/guest/guest_city') ?>',
+            'country_id': jQuery('#order-shipping_address_address_country_id').val() != '' ? jQuery('#order-shipping_address_address_country_id').val() : '<?php echo Mage::getStoreConfig('xpos/guest/country_id'); ?>',
+            'region_id': jQuery('#order-shipping_address_address_region_id').val() != '' ? jQuery('#order-shipping_address_address_region_id').val() : '<?php echo Mage::getStoreConfig('xpos/guest/region_id'); ?>',
+            'postcode': jQuery('#order-shipping_address_address_postcode').val() != '' ? jQuery('#order-shipping_address_address_postcode').val() : '<?php echo Mage::getStoreConfig('xpos/guest/guest_postal_code'); ?>',
+            'telephone': jQuery('#order-shipping_address_address_telephone').val() != '' ? jQuery('#order-shipping_address_address_telephone').val() : '<?php echo Mage::getStoreConfig('xpos/guest/guest_phone') ?>'
+        };
+        setAdd(newAddress, true);
+    }
+
+    order.shippingAddressContainer = '<?php echo $_fieldsContainerId ?>';
+    order.setAddresses(<?php echo $this->getAddressCollectionJson() ?>);
+
+    function enableBilling(e) {
+        if (e.checked) {
+            jQuery('#billing-overlay').show();
+            $('order-billing-address-content').hide();
+            jQuery(".order-address").getNiceScroll().hide();
+        } else {
+            $('order-billing-address-content').show();
+            $('order-address-content').show();
+            jQuery('input#order-shipping_same_as_billing').attr('checked', false);
+
+            jQuery('#billing-overlay').hide();
+            jQuery('#shipping-overlay').hide();
+            jQuery(".order-address").getNiceScroll().resize();
+            jQuery(".order-address").getNiceScroll().show();
+
+        }
+        e.disabled = false;
+    }
+
+    function enableShipping(e) {
+        if (e.checked) {
+            jQuery('#shipping-overlay').show();
+            $('order-address-content').hide();
+            jQuery(".order-address").getNiceScroll().hide();
+        } else {
+            $('order-billing-address-content').show();
+            $('order-address-content').show();
+            jQuery('input#order-billing_same_as_billing').attr('checked', false);
+
+            jQuery('#shipping-overlay').hide();
+            jQuery('#billing-overlay').hide();
+            jQuery(".order-address").getNiceScroll().resize();
+            jQuery(".order-address").getNiceScroll().show();
+        }
+        e.disabled = false;
+    }
+
+    function clearShippingRegion() {
+        jQuery('#order-shipping_address_address_region').val('');
+        jQuery('#order-shipping_address_address_region_id').val('');
+
+        setTimeout(function () {
+            if (jQuery('#order-shipping_address_address_region_id').is(":disabled")) {
+                jQuery('#uniform-order-shipping_address_address_region_id').hide('slow');
+            } else {
+                jQuery('#uniform-order-shipping_address_address_region_id').show('slow');
+            }
+        }, 10);
+
+    }
+
+    function clearBillingRegion() {
+        jQuery('#order-billing_address_address_region').val('');
+        jQuery('#order-billing_address_address_region_id').val('');
+
+        setTimeout(function () {
+            if (jQuery('#order-billing_address_address_region_id').is(":disabled")) {
+                jQuery('#uniform-order-billing_address_address_region_id').hide('slow');
+            } else {
+                jQuery('#uniform-order-billing_address_address_region_id').show('slow');
+            }
+        }, 10);
+    }
+
+    function updateShippingRates() {
+        return;
+        if (window.isApplyingRp) {
+            window.isApplyingRp = false;
+            return;
+        }
+        jQuery('#order-shipping_address_address_region_virtual').hide();
+        if (isOnline()) {
+            var data = order.serializeData(order.shippingAddressContainer).toObject();
+            order.isShippingMethodReseted = false;
+            data.collect_shipping_rates = 1;
+            data.reload_order = jQuery('#reload_order').val();
+            if (!initialLoad) {
+                if (window.isIntegrateRP != '0' || window.isIntegrateWebtexGiftCard != '0') {
+                    order.loadArea(['shipping_method', 'totals', 'coupons'], true, data);
+                } else {
+                    order.loadArea(['shipping_method', 'totals'], true, data);
+                }
+            }
+        }
+    }
+
+    shippingRegionUpdater = new RegionUpdater('order-shipping_address_address_country_id', 'order-shipping_address_address_region', 'order-shipping_address_address_region_id', <?php echo $this->helper('directory')->getRegionJson() ?>, undefined, 'order-billing_address_address_postcode');
+    billingRegionUpdater = new RegionUpdater('order-billing_address_address_country_id', 'order-billing_address_address_region', 'order-billing_address_address_region_id', <?php echo $this->helper('directory')->getRegionJson() ?>, undefined, 'order-billing_address_address_postcode');
+
+    jQuery('#clear_shipping_address').click(function () {
+        jQuery('#order-shipping_address_address_firstname').val('');
+        jQuery('#order-shipping_address_address_lastname').val('');
+        jQuery('#order-shipping_address_address_street0').val('');
+        jQuery('#order-shipping_address_address_city').val('');
+        jQuery('#order-shipping_address_address_country_id').val('');
+        jQuery('#order-shipping_address_address_region').val('');
+        jQuery('#order-shipping_address_address_region').show();
+        jQuery('#order-shipping_address_address_region_id').hide();
+        jQuery('#order-shipping_address_address_postcode').val('');
+        jQuery('#order-shipping_address_address_telephone').val('');
+        jQuery('#order-shipping_address_address_region_id').attr('disabled', true);
+        jQuery.uniform.update();
+        clearShippingRegion();
+    });
+
+    jQuery('#clear_billing_address').click(function () {
+        jQuery('#order-billing_address_address_firstname').val('');
+        jQuery('#order-billing_address_address_lastname').val('');
+        jQuery('#order-billing_address_address_street0').val('');
+        jQuery('#order-billing_address_address_city').val('');
+        jQuery('#order-billing_address_address_country_id').val('');
+        jQuery('#order-billing_address_address_region_id').val('');
+        jQuery('#order-billing_address_address_region').val('');
+        jQuery('#order-billing_address_address_region').show();
+        jQuery('#order-billing_address_address_region_id').hide();
+        jQuery('#order-billing_address_address_postcode').val('');
+        jQuery('#order-billing_address_address_telephone').val('');
+        jQuery('#order-billing_address_address_region_id').attr('disabled', true);
+        jQuery.uniform.update();
+        clearBillingRegion();
+
+    });
+
+    jQuery('#copy-from-billing-address').click(function () {
+        jQuery('#order-shipping_address_address_firstname').val(jQuery('#order-billing_address_address_firstname').val());
+        jQuery('#order-shipping_address_address_lastname').val(jQuery('#order-billing_address_address_lastname').val());
+        jQuery('#order-shipping_address_address_street0').val(jQuery('#order-billing_address_address_street0').val());
+        jQuery('#order-shipping_address_address_city').val(jQuery('#order-billing_address_address_city').val());
+        jQuery('#order-shipping_address_address_country_id').val(jQuery('#order-billing_address_address_country_id').val());
+        shippingRegionUpdater.update()
+        jQuery('#order-shipping_address_address_region_id').val(jQuery('#order-billing_address_address_region_id').val());
+        jQuery('#order-shipping_address_address_region').val(jQuery('#order-billing_address_address_region').val());
+        jQuery('#order-shipping_address_address_postcode').val(jQuery('#order-billing_address_address_postcode').val());
+        jQuery('#order-shipping_address_address_telephone').val(jQuery('#order-billing_address_address_telephone').val());
+        jQuery.uniform.update();
+        setTimeout(function () {
+            if (jQuery('#order-shipping_address_address_region_id').is(":disabled")) {
+                jQuery('#uniform-order-shipping_address_address_region_id').hide('slow');
+            } else {
+                jQuery('#uniform-order-shipping_address_address_region_id').show('slow');
+            }
+        }, 10);
+    });
+    jQuery(document).ready(function () {
+        <?php if(isset($order['customer_id'])){ ?>
+        <?php
+        if(Mage::getModel('xpos/integrate')->isIntegrateRp()){
+         Mage::getModel('xpos/integrate')->setSessionCustomer($order['customer_id']);
+         ?>
+        <?php
+        $rewardPoints = Mage::getModel('xpos/integrate')->getBalanceAccountFormated($order['customer_id']);
+        $_pointMoney = Mage::getModel('xpos/integrate')->getPointMoneyByCustomerIdDefault($order['customer_id']);
+        if($_pointMoney){
+        $_pointMoney = ' (' . $_pointMoney . ')';
+        }
+        ?>
+        setRp();
+        <?php }?>
+        jQuery('#order_customer_id').val(<?php echo $customer['entity_id'] ?>);
+        jQuery('#order_account_email').val('<?php echo $customer['email'] ?>');
+        jQuery("#customer_options").removeClass('search-customer');
+        jQuery("#customer_options").addClass('delete-customer');
+        jQuery("#customer_options").attr('onclick', 'come_back_guest()');
+        jQuery('#emailreceipt').val('<?php echo $customer['email'] ?>');
+        jQuery("#customer_name").html('<?php echo $customer['firstname'] . " " . $customer['lastname']; ?>');
+        <?php }else{ ?>
+        getCustomerDefault(document.getElementById('change_customer_guest'));
+        <?php
+        if(Mage::getModel('xpos/integrate')->isIntegrateRp()){
+        Mage::getModel('xpos/integrate')->setSessionCustomer(Mage::helper('xpos/configXPOS')->getDefaultCustomerId()) ?>
+        <?php
+        $rewardPoints = Mage::getModel('xpos/integrate')->getBalanceAccountFormated(Mage::helper('xpos/configXPOS')->getDefaultCustomerId());
+        $_pointMoney = Mage::getModel('xpos/integrate')->getPointMoneyByCustomerIdDefault(Mage::helper('xpos/configXPOS')->getDefaultCustomerId());
+        if($_pointMoney){
+        $_pointMoney = ' (' . $_pointMoney . ')';
+        }
+        ?>
+        setRp();
+        <?php }?>
+        <?php } ?>
+    });
+    <?php if(Mage::getModel('xpos/integrate')->isIntegrateRp()){ ?>
+    function setRp() {
+        var currentCustomer = '<h4 style="font-size: 14px">' + jQuery('#customer_name').html() + '</h4>';
+        var points =
+            '<h5 style="font-size: 8px;text-transform: capitalize;color: #1b376c"> Balance is: ' +
+            '<?php echo $rewardPoints ?>' + '<?php echo $_pointMoney ?>' +
+            '</h5>';
+        var text = currentCustomer + points;
+        jQuery('#customer_name').html(text);
+    }
+    <?php }?>
+
+    //
+    function switchBillingAddress(obj) {
+        var address = obj.value;
+        var optionTagID = '#customer_billing_address_list option[value=' + address + ']'
+        optionTag = jQuery(optionTagID);
+        jQuery('#order-billing_address_address_firstname').val(optionTag.attr('firstname'));
+        jQuery('#order-billing_address_address_lastname').val(optionTag.attr('lastname'));
+        jQuery('#order-billing_address_address_street0').val(optionTag.attr('street'));
+        jQuery('#order-billing_address_address_country_id').val(optionTag.attr('country_id'));
+        billingRegionUpdater.update();
+        jQuery('#order-billing_address_address_city').val(optionTag.attr('city'));
+        jQuery('#order-billing_address_address_region').val(optionTag.attr('region'));
+        jQuery('#order-billing_address_address_region_id').val(optionTag.attr('region_id'));
+        jQuery('#order-billing_address_address_postcode').val(optionTag.attr('postcode'));
+        jQuery('#order-billing_address_address_telephone').val(optionTag.attr('telephone'));
+//        jQuery('#order-billing_address_address_company').val(optionTag.attr('company'));
+
+
+        setTimeout(function () {
+            jQuery.uniform.update()
+            if (jQuery('#order-billing_address_address_region_id').is(":disabled")) {
+                jQuery('#uniform-order-billing_address_address_region_id').hide('slow');
+            } else {
+                jQuery('#uniform-order-billing_address_address_region_id').show('slow');
+            }
+        }, 10);
+    }
+    function switchShippingAddress(obj) {
+        var address = obj.value;
+        var optionTagID = '#customer_shipping_address_list option[value=' + address + ']';
+        optionTag = jQuery(optionTagID);
+        jQuery('#order-shipping_address_address_firstname').val(optionTag.attr('firstname'));
+        jQuery('#order-shipping_address_address_lastname').val(optionTag.attr('lastname'));
+        jQuery('#order-shipping_address_address_street0').val(optionTag.attr('street'));
+        jQuery('#order-shipping_address_address_country_id').val(optionTag.attr('country_id'));
+        shippingRegionUpdater.update();
+        jQuery('#order-shipping_address_address_city').val(optionTag.attr('city'));
+        jQuery('#order-shipping_address_address_region').val(optionTag.attr('region'));
+        jQuery('#order-shipping_address_address_region_id').val(optionTag.attr('region_id'));
+        jQuery('#order-shipping_address_address_postcode').val(optionTag.attr('postcode'));
+        jQuery('#order-shipping_address_address_telephone').val(optionTag.attr('telephone'));
+//        jQuery('#order-shipping_address_address_company').val(optionTag.attr('company'));
+
+        setTimeout(function () {
+            jQuery.uniform.update()
+            if (jQuery('#order-shipping_address_address_region_id').is(":disabled")) {
+                jQuery('#uniform-order-shipping_address_address_region_id').hide('slow');
+            } else {
+                jQuery('#uniform-order-shipping_address_address_region_id').show('slow');
+            }
+        }, 10);
+    }
+    function setTypeOrder(type){
+        $.jStorage.set('mode',type);
+    }
+    function getTypeOrder(){
+        var type = $.jStorage.get('mode');
+        if(type){
+            return type;
+        }
+        return false;
+    }
+</script>

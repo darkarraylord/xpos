@@ -1,0 +1,49 @@
+<?php /* @var $this SM_XReport_Block_Adminhtml_Dashboard_Chart */ ?>
+<?php
+/**
+ * Created by IntelliJ IDEA.
+ * User: vjcspy
+ * Date: 10/26/15
+ * Time: 12:20 PM
+ */
+$this->setDataRow();
+$dataSalesChart = json_encode($this->getDataSalesChart('24h'));
+$a = 1;
+?>
+<div class="panel panel-default" ng-controller="salesOverview">
+    <div class="panel-heading">
+        <i class="fa fa-bar-chart-o fa-fw"></i> Revenue Overview - <label>//overview.periodTitle//</label>
+
+        <div class="pull-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default btn-xs dropdown-toggle"
+                        data-toggle="dropdown">
+                    Period
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                    <li ng-click="changePeriod(0);"><a class="">Last 24h</a>
+                    </li>
+                    <li ng-click="changePeriod(1);"><a>Last 7 days</a>
+                    </li>
+                    <li ng-click="changePeriod(2);"><a>Current Month</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li ng-click="changePeriod(3);"><a>YTD</a>
+                    </li>
+                    <li ng-click="changePeriod(4);"><a>2YTD</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- /.panel-heading -->
+    <div class="panel-body" ng-init='dashboadData.dataSalesChart = <?php echo $dataSalesChart; ?>'>
+        <canvas id="line" class="chart chart-line" chart-data="salesOverview.dataSales"
+                chart-labels="salesOverview.labelsSales" chart-legend="false" chart-series="salesOverview.seriesSales"
+                chart-click="salesOverview.onClickSales">
+        </canvas>
+    </div>
+    <!-- /.panel-body -->
+</div>

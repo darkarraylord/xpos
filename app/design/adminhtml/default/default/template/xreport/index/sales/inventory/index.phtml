@@ -1,0 +1,76 @@
+<?php
+/**
+ * Created by IntelliJ IDEA.
+ * User: vjcspy
+ * Date: 10/20/15
+ * Time: 3:57 PM
+ */
+?>
+<div class="se-pre-con" style="display: none;"></div>
+<div class="goto-top" style="display: block;">
+    <i class="fa fa-arrow-circle-up"></i>
+</div>
+<div id="wrapper" ng-app="xReportApp" ng-controller="xReportController">
+
+    <?php echo $this->getChildHtml('navigation'); ?>
+
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-header">
+                    <ol class="breadcrumb">
+                        <li><i class="fa fa-home"></i><a
+                                href="<?php echo Mage::helper("adminhtml")->getUrl("xreport/view/index", array('_nosid' => true)); ?>">Home</a>
+                        </li>
+                        <li><i class="icon_piechart"></i>Inventory</li>
+
+                    </ol>
+                </div>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+
+        <?php echo $this->getChildHtml('xreport.sales.grid') ?>
+
+    </div>
+    <!-- /#page-wrapper -->
+</div>
+<script>
+    jQuery(window).load(function () {
+        // Animate loader off screen
+        hideLoad();
+    });
+    function showLoad() {
+        jQuery(".se-pre-con").show();
+    }
+    function hideLoad() {
+        jQuery(".se-pre-con").fadeOut("slow");
+    }
+    jQuery(document).ready(function () {
+        jQuery('#na_sales').addClass('active');
+        jQuery('.na_xreport').removeClass('active');
+    });
+    function showGotoTop() {
+        var $gotoTop = $('.goto-top'),
+            $bdshare = $('#bdshare');
+
+        if ($(document).scrollTop() > 77) {
+            $gotoTop.fadeIn('slow');
+            $bdshare.fadeOut('slow');
+        } else {
+            $gotoTop.fadeOut('slow');
+            $bdshare.fadeIn('slow');
+        }
+    }
+    function main() {
+        $(window).scroll(showGotoTop);
+        $(window).resize(showGotoTop);
+        $('.goto-top').click(function () {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+            return false;
+        });
+        showGotoTop();
+    }
+    main();
+</script>

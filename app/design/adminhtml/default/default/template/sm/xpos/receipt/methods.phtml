@@ -1,0 +1,33 @@
+<?php
+$arrayNotShow = array('method', 'enable', 'check_no', 'check_date', 'checks');
+?>
+<div class="methods" style="text-align: <?php echo $this->getHtmlAlignment(); ?>;">
+    <div class="shipping">
+        <?php if(!($this->getOrder()->getPayment() == null)): //need to be reviewed ?>
+            <span><?php echo Mage::helper('xpos')->__("Shipping"); ?></span>
+        <?php endif; ?>
+        <span><?php echo Mage::helper('xpos')->__($this->getShippingMethodTitle()); ?></span>
+    </div>
+    <div class="payment">
+        <?php if(!($this->getOrder()->getShippingDescription() == '')): //need to be reviewed ?>
+            <span><?php echo Mage::helper('xpos')->__("Payment"); ?></span>
+        <?php endif; ?>
+
+        <span><?php echo Mage::helper('xpos')->__($this->getPaymentMethodTitle()); ?></span><br>
+        <?php
+        $payment = $this->getOrder()->getPayment();
+        $data = null;
+        if($payment){
+            $data = unserialize($payment->getAdditionalData());
+        }
+
+        ?>
+<?php
+if(is_array($data)){
+    foreach ($data as $k => $v) {
+        if (!in_array($k, $arrayNotShow) && $v > 0) echo ($this->getConfigDataPaymentMethod($k, "title")) . ': ' . $this->getOrder()->formatPrice(floatval($v)) . '</br>';
+       }
+}
+?>
+    </div>
+</div>

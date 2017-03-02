@@ -1,0 +1,108 @@
+<?php
+
+/** @var $this SM_XPos_Block_Adminhtml_XPos_Receipt_Items */
+$var = $this->getParentBlock()->_viewVars;
+$printeGift = $var['printGift'];
+?>
+
+<div class="items-view" style="<?php echo $this->getHtmlSeparatorStyle(); ?>">
+    <table>
+        <thead>
+        <tr>
+            <th class="item-name" data-metadata="item-name"
+                align="left"><?php echo Mage::helper('xpos')->__('ITEM'); ?></th>
+            <th data-metadata="qty" <?php if ($printeGift) echo 'style="padding-right: 80px;"' ?>><?php echo Mage::helper('xpos')->__('Qty'); ?></th>
+            <?php
+            if (!$printeGift) {
+                ?>
+                <th class="price-container"
+                    data-metadata="price"><?php echo Mage::helper('xpos')->__('Price'); ?></th>
+                <th class="tax" data-metadata="tax-amount"><?php echo Mage::helper('xpos')->__('TAX'); ?></th>
+                <th class="row-total" data-metadata="row-total"
+                    align="right"><?php echo Mage::helper('xpos')->__('SUBTOTAL'); ?></th>
+                <?php
+            }
+            ?>
+        </tr>
+        </thead>
+        <tbody>
+        <?php if ($this->getRequest()->getParam('preview') != null): ?>
+            <!--For previewing-->
+            <tr>
+                <td class="item-name" data-metadata="item-name" align="left">Product Item Preview #1 <span class="sku">SKU!123</span>
+                </td>
+                <td data-metadata="qty">0</td>
+                <td class="price-container"
+                    data-metadata="price"><?php echo Mage::helper('core')->currency(0, true, false); ?></td>
+                <td class="tax"
+                    data-metadata="tax-amount"><?php echo Mage::helper('core')->currency(0, true, false); ?></td>
+                <td class="row-total" data-metadata="row-total"
+                    align="right"><?php echo Mage::helper('core')->currency(0, true, false); ?></td>
+            </tr>
+            <tr>
+                <td class="item-name" data-metadata="item-name" align="left">Product Item Preview #2 <span class="sku">SKU!223</span>
+                </td>
+                <td data-metadata="qty">0</td>
+                <td class="price-container"
+                    data-metadata="price"><?php echo Mage::helper('core')->currency(0, true, false); ?></td>
+                <td class="tax"
+                    data-metadata="tax-amount"><?php echo Mage::helper('core')->currency(0, true, false); ?></td>
+                <td class="row-total" data-metadata="row-total"
+                    align="right"><?php echo Mage::helper('core')->currency(0, true, false); ?></td>
+            </tr>
+        <?php endif; ?>
+        <?php foreach ($this->getItems() as $_item): ?>
+            <?php if ($_item->getData('parent_item_id') == null): ?>
+                <tr>
+                    <td class="item-name" data-metadata="item-name" align="left">
+                        <?php
+                        $productId = $_item->getProductId();
+                        if ($productId == Mage::helper('xpos/customSalesHelper')->getCustomSalesId()) {
+                            $data = $_item->getProductOptions();
+                            $data = $data['additional_options'];
+                            foreach ($data as $customSalesOption) {
+                                if (isset($customSalesOption['label']) && $customSalesOption['label'] == 'custom_sales_name')
+                                    $productCustomSalesName = $customSalesOption['value'];
+                            }
+                            echo $productCustomSalesName;
+                        } else {
+                            echo $_item->getName();
+                        }
+                        ?>
+                        <span class="sku"><?php echo $_item->getSku(); ?></span>
+                        <div class="item-options">
+                            <?php echo $this->getItemOptions($_item); ?>
+                        </div>
+                    </td>
+                    <td data-metadata="qty" <?php
+                    if ($printeGift) echo 'style="padding-right: 85px;"'
+                    ?>><?php echo floatval($_item->getQtyOrdered()); ?></td>
+                    <?php
+                    if (!$printeGift) {
+                        ?>
+                        <td class="price-container" data-metadata="price">
+                            <?php if ($this->helper('tax')->displaySalesBothPrices() || $this->helper('tax')->displaySalesPriceExclTax()): ?>
+                                <?php echo $this->getOrder()->formatPrice($_item->getData('price')); ?>
+                            <?php endif; ?>
+                            <?php if ($this->helper('tax')->displaySalesBothPrices() || $this->helper('tax')->displaySalesPriceInclTax()): ?>
+                                <?php echo $this->getOrder()->formatPrice($_item->getData('price_incl_tax')); ?>
+                            <?php endif; ?>
+                        </td>
+                        <td class="tax"
+                            data-metadata="tax-amount"><?php echo $this->getOrder()->formatPrice($_item->getData('tax_amount')); ?></td>
+                        <td class="row-total" data-metadata="row-total" align="right">
+                            <?php if ($this->helper('tax')->displaySalesBothPrices() || $this->helper('tax')->displaySalesPriceExclTax()): ?>
+                                <?php echo $this->getOrder()->formatPrice($_item->getData('row_total')); ?>
+                            <?php endif; ?>
+                            <?php if ($this->helper('tax')->displaySalesBothPrices() || $this->helper('tax')->displaySalesPriceInclTax()): ?>
+                                <?php echo $this->getOrder()->formatPrice($_item->getData('row_total_incl_tax')); ?>
+                            <?php endif; ?>
+                        </td>
+                    <?php } ?>
+                </tr>
+            <?php endif; ?>
+
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>

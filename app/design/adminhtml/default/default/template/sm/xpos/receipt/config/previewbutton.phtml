@@ -1,0 +1,43 @@
+<script type="text/javascript">
+;(function(window){
+    function xPOSReceiptPreview() {
+        var fontType = document.getElementById('xpos_receipt_font_type'),
+            logoLiteral = document.getElementById('xpos_receipt_logo_literal'),
+            dayFormat = document.getElementById('xpos_receipt_day_format'),
+            slogan = document.getElementById('xpos_receipt_slogan_literal'),
+            footerMessage = document.getElementById('xpos_receipt_fore_message'),
+            additionalFields = document.getElementById('xpos_receipt_addition_fields_to_display'),
+            informationSeparator = document.getElementById('xpos_receipt_info_separator'),
+            logoAlignment = document.getElementById('xpos_receipt_logo_html_alignment'),
+            storeInformationAlignment = document.getElementById('xpos_receipt_store_info_html_alignment'),
+            methodsAlignment = document.getElementById('xpos_receipt_methods_html_alignment');
+
+        /*
+         * Get selected options of additionalFields
+         */
+        var additionalFieldParams = '';
+        for (var _i = 0; _i < additionalFields.selectedOptions.length; _i++) {
+          var _delimitor = (_i < additionalFields.selectedOptions.length - 1) ? ',' : '';
+          additionalFieldParams += additionalFields.selectedOptions[_i].value + _delimitor;
+        }
+
+        var previewParams = '?';
+        previewParams += 'preview=1';
+        previewParams += '&' + logoLiteral.id + '=' + logoLiteral.value;
+        previewParams += '&' + dayFormat.id + '=' + dayFormat.value;
+        previewParams += '&' + slogan.id + '=' + slogan.value;
+        previewParams += '&' + footerMessage.id + '=' + footerMessage.value;
+        previewParams += '&' + informationSeparator.id + '=' + informationSeparator.value;
+        previewParams += '&' + logoAlignment.id + '=' + logoAlignment.value;
+        previewParams += '&' + storeInformationAlignment.id + '=' + storeInformationAlignment.value;
+        previewParams += '&' + methodsAlignment.id + '=' + methodsAlignment.value;
+        previewParams += '&' + fontType.id + '=' + fontType.value;
+        previewParams += '&' + additionalFields.id + '=' + additionalFieldParams;
+
+        window.open('<?php echo Mage::helper('adminhtml')->getUrl('adminhtml/xpos/printInvoice/'); ?>' + previewParams, '_blank');
+    }
+    window.xPOSReceiptPreview = xPOSReceiptPreview;
+})(window);
+</script>
+
+<?php echo $this->getButtonHtml(); ?>

@@ -1,0 +1,49 @@
+<ul>
+    <?php foreach ($items as $item) { ?>
+        <li <?php foreach ($item as $key => $value) { ?><?php
+            if ($key != 'addresses') echo $key . '="' . $value . '" ';
+            else {
+                if(!is_array($value)){continue;}
+                echo $key . '="' . count($value) . '" ';
+                $count = 0;
+                foreach ($value as $keyAddress => $address) {
+                    foreach ($address as $keyAddressDetail => $addressDetail) {
+                        echo $keyAddressDetail . $count . '="' . $addressDetail . '" ';
+
+                    }
+                    $count++;
+                }
+
+            }
+        }
+        ?>>
+            <?php $name = $item['name'];
+            $length = strlen($name);
+            if ($length > 20) {
+                $newName = substr($name, 0, 20);
+                $newName .= '...';
+            } else $newName = $name;
+
+            $email = $item['email'];
+            if ($item['telephone'] != NULL) {
+                $email = $item['telephone'] . '-' . $email;
+            }
+
+            $length = strlen($email);
+            if ($length > 24) {
+                $newEmail = substr($email, 0, 21);
+                $newEmail .= '...';
+            } else $newEmail = $email;
+
+
+            ?>
+            <span style="width: 50%; overflow: hidden; "
+                  class="name-customer"><?php echo $this->htmlEscape($newName) ?></span>
+            <span style=" overflow: hidden;float:left !important; "
+                  class="email-customer"><?php echo $newEmail ?></span>
+        </li>
+    <?php } ?>
+    <?php if (count($items) == 0) { ?>
+        <li id="no_result"><span><?php echo $this->__("No matching results") ?></span></li>
+    <?php } ?>
+</ul>

@@ -1,0 +1,380 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: SMART
+ * Date: 1/7/2016
+ * Time: 5:55 PM
+ */
+?>
+<input class="complete-offline-link" type="hidden"
+       value="<?php echo $this->getUrl('adminhtml/xpos/completeOffline') ?>">
+<div class="popup popup-list-offline-order"
+     style="width:680px ; left: 230.5px; position: fixed; top: 100px; z-index: 9999; display: none; opacity: 1;">
+    <span id="login_popup_close" class="button b-close"></span>
+    <h4>Offline Order List</h4>
+
+
+    <div id="" class="offline-order-div">
+        <div class="grid">
+            <div class="hor-scroll">
+                <table cellspacing="0" id="" class="data offline_order_grid_table">
+                    <thead>
+                    <tr>
+                        <th><input name="select_all" value="1" type="checkbox"></th>
+                        <th>Order</th>
+                        <th>Customer</th>
+                        <th>Purchased On</th>
+                        <th>GT.</th>
+                        <th>Quick Action</th>
+                    </tr>
+                    </thead>
+                </table>
+
+            </div>
+            <div class="order-creditmemo_view off-order-buttons-bar">
+                <div class="content-header-fancy">
+                    <p class="form-buttons" style="text-align: right;margin: 3px">
+                        <a class='fancy-button complete-action' href="#">Complete</a>
+                        <a class='fancy-button cancel-action' href="#">Cancel</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="popup popup-view-offline-order"
+     style="left: 230.5px; position: fixed; top: 100px; z-index: 9999; display: none; opacity: 1;">
+    <span id="login_popup_close" class="button b-close"></span>
+    <h4>Offline Order #<span class="off-order-id"></span></h4>
+
+    <div class="order-creditmemo_view off-order-buttons-bar">
+        <div class="content-header-fancy">
+            <p class="form-buttons" style="text-align: right;margin: 3px">
+                <a class='fancy-button single-complete-action' href="#">Complete</a>
+                <a class='fancy-button single-cancel-action' href="#">Cancel</a>
+            </p>
+        </div>
+    </div>
+    <div id="" class="offline-order-div">
+        <div class="offline-order-div-scroll">
+            <div class="off-order-payment-box off-order-box">
+                <h4 class="label-method">PAYMENT INFORMATION</h4>
+
+                <div class="off-order-payment">
+                </div>
+            </div>
+            <div class="off-order-shipment-box off-order-box">
+                <h4 class="label-method">SHIPPING & HANDLING INFORMATION</h4>
+
+                <div class="off-order-shipment off-order-value-method">
+
+                </div>
+            </div>
+            <div class="off-order-items">
+                <table class="table-off-order-items">
+                    <thead>
+                    <tr>
+                        <th class="align-left">Product</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th>Discount</th>
+                        <th>Subtotal</th>
+                    </tr>
+                    </thead>
+                    <tbody class="off-order-items-tbody">
+
+                    </tbody>
+
+                </table>
+                <table class="table-off-order-total">
+                    <tfoot>
+                    <tr>
+                        <td>Sub Total</td>
+                        <td class="off-total off-sub-total"></td>
+                    </tr>
+                    <tr>
+                        <td>Discount</td>
+                        <td class="off-total off-total-discount"></td>
+                    </tr>
+                    <tr>
+                        <td>Tax</td>
+                        <td class="off-total off-total-tax"></td>
+                    </tr>
+                    <tr>
+                        <td>Grand Total</td>
+                        <td class="off-total off-grand-total"></td>
+                    </tr>
+                    <tr>
+                        <td>Total Paid</td>
+                        <td class="off-total off-total-paid"></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script>
+    jQuery(document).ready(function () {
+        // Array holding selected row IDs
+        var rows_selected = [];
+        var table = jQuery('.offline_order_grid_table').DataTable({
+            data: prepareDataForOfflineOrderTable(),
+            "searching": false,
+            "bLengthChange": false,
+            "bFilter": true,
+            "bInfo": true,
+            "bAutoWidth": false,
+            'columnDefs': [
+                {
+                    'targets': 0,
+                    'searchable': false,
+                    'orderable': false,
+                    'className': 'dt-body-center',
+                    'render': function (data, type, full, meta) {
+                        var ck = '<input class="checkbox-off" pos="' + data + '" id="checkbox-off-' + data + '" type="checkbox">';
+                        return ck;
+                    }
+                },
+                {
+                    'targets': 1,
+                    'searchable': false,
+                    'orderable': false,
+                    'className': 'dt-body-center-end',
+                    'render': function (data, type, full, meta) {
+                        var ck = '<a href="javascript:void(0)" class="icid"  offId="' + data + '">' + data + '</a>'
+                        return ck;
+                    }
+                },
+                {
+                    'targets': 5,
+                    'searchable': false,
+                    'orderable': false,
+                    'className': 'dt-body-center-end',
+                    'render': function (data, type, full, meta) {
+                        var ck = '<select class="select-off" pos="' + data + '" id="select-off-' + data + '" >' +
+                            '<option value=-1></option>' +
+                            '<option value=1>Complete</option>' +
+                            '<option value=2>Ship</option>' +
+                            '<option value=3>Invoice</option>' +
+                            '<option value=0>Cancel</option>' +
+                            '</select>';
+                        return ck;
+                    }
+                }
+            ],
+            'order': [[1, 'asc']],
+            'rowCallback': function (row, data, dataIndex) {
+                // Get row ID
+                var rowId = data[0];
+
+                // If row ID is in the list of selected row IDs
+                if (jQuery.inArray(rowId, rows_selected) !== -1) {
+                    jQuery(row).find('input[type="checkbox"]').prop('checked', true);
+                    if(!jQuery(row).hasClass('success')){
+                        jQuery(row).addClass('selected');
+                    }
+                }
+            }
+        });
+
+        jQuery('.offline_order_grid_table tbody').on('click', 'input[type="checkbox"]', function (e) {
+            var $row = jQuery(this).closest('tr');
+
+            // Get row data
+            var data = table.row($row).data();
+            // Get row ID
+            var rowId = data[0];
+
+            // Determine whether row ID is in the list of selected row IDs
+            var index = jQuery.inArray(rowId, rows_selected);
+
+            // If checkbox is checked and row ID is not in list of selected row IDs
+            if (this.checked && index === -1) {
+                rows_selected.push(rowId);
+
+                // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+            } else if (!this.checked && index !== -1) {
+                rows_selected.splice(index, 1);
+            }
+
+            if (this.checked) {
+                $row.addClass('selected');
+            } else {
+                $row.removeClass('selected');
+            }
+
+            // Update state of "Select all" control
+            updateDataTableSelectAllCtrl(table);
+
+            // Prevent click event from propagating to parent
+            e.stopPropagation();
+        });
+
+        // Handle click on table cells with checkboxes
+        jQuery('.offline_order_grid_table').on('click', 'tbody td, thead th:first-child', function (e) {
+            jQuery(this).parent().find('input[type="checkbox"]').trigger('click');
+        });
+
+        jQuery('.offline_order_grid_table').on('click', '.select-off', function (e) {
+            var row = jQuery(this).closest('tr');
+            if(row.hasClass('success')){
+                jQuery(this).attr('disabled',true);
+            }
+            var otherRow = jQuery('[name="select_all"]');
+            if(otherRow.prop('checked')){
+                otherRow.trigger('click');
+            }
+            e.stopPropagation();
+        });
+
+        // Handle click on "Select all" control
+        jQuery('.offline_order_grid_table thead input[name="select_all"]', table.table().container()).on('click', function (e) {
+            if (this.checked) {
+                jQuery('.offline_order_grid_table tbody input[type="checkbox"]:visible:not(:checked)').trigger('click');
+            } else {
+                jQuery('.offline_order_grid_table tbody input[type="checkbox"]:checked:visible').trigger('click');
+            }
+
+            // Prevent click event from propagating to parent
+            e.stopPropagation();
+        });
+
+        // Handle table draw event
+        table.on('draw', function () {
+            // Update state of "Select all" control
+            updateDataTableSelectAllCtrl(table);
+        });
+        // Handle form submission event
+        jQuery(document).on('click', '.complete-action', function () {
+           var load = jQuery('.uil-facebook-css:visible').length;
+            if(load == 0){
+               doCompleteAction(table);
+           }
+        });
+
+        // Handle form submission event
+        jQuery(document).on('click', '.cancel-action', function (e) {
+           alertConfirm("Delete orders!",table);
+//            var rows = table.rows('.selected').data();
+//            cancelOfflineOrders(rows, table);
+        });
+
+        jQuery(document).on('click', '#link_sync_order', function (e) {
+            reDrawOfflineOrderTable(table);
+            showOfflineOrderList();
+            var all = jQuery('[type="checkbox"][name="select_all"]');
+            all.trigger('click');
+            if (!all.prop('checked')) {
+                all.trigger('click');
+            }
+        });
+
+        /*
+         * when click link off order
+         * */
+        jQuery(document).on('click', '.icid', function () {
+            window.needReSaveOfflineOrder = false;
+            var all = jQuery('[type="checkbox"][name="select_all"]');
+            if (all.prop('checked')) {
+                all.trigger('click');
+            }
+            if (offId = jQuery(this).attr('offId')) {
+                onViewOfflineOrder(offId);
+                return;
+            }
+            var id = jQuery(this).attr('oid');
+            var icid = jQuery(this).attr('icid');
+            onViewOrder(id, '', icid);
+        });
+
+        /*
+         * quick action
+         *
+         * */
+        jQuery(document).on('change', '.select-off', function () {
+            var COMPLETE = 1;
+            var SHIP = 2;
+            var INVOICE = 3;
+            var CANCEL = 0;
+            var index = jQuery(this).attr('pos');
+            var action = jQuery(this).val();
+            if (jQuery.inArray(action, [CANCEL, SHIP, INVOICE, COMPLETE, "0", "1", "2", "3"]) == -1) {
+                return;
+            }
+            selectRow(index);
+            if (action == COMPLETE || action == SHIP || action == INVOICE) {
+                if (!checkFree()) {
+                    return;
+                }
+                if (window.isFreeVerion && window.currentOrderAmount + 1 > window.maxOrderAmount) {
+                    callFreeWarningMessage(1);
+                    return false;
+                }
+                completeSingleOfflineOrder(index, table, action);
+            }
+            if (action == CANCEL) {
+
+                cancelOfflineOrders([index], table)
+            }
+        });
+        /*
+         * complete in view
+         * single-complete-action
+         * */
+        jQuery(document).on('click', '.single-complete-action', function () {
+            if (!checkFree()) {
+                return;
+            }
+            if (window.isFreeVerion && window.currentOrderAmount + 1 > window.maxOrderAmount) {
+                callFreeWarningMessage(1);
+                return false;
+            }
+            var index = jQuery('.off-order-id').text();
+            if (!index) {
+                return;
+            }
+            jQuery('.popup-view-offline-order').bPopup().close();
+            completeSingleOfflineOrder(index - 1, table,1);
+        });
+        /*
+         * cancel in view
+         * single-cancel-action
+         * */
+        jQuery(document).on('click', '.single-cancel-action', function () {
+            var index = jQuery('.off-order-id').text();
+            if (!index) {
+                return;
+            }
+            jQuery('.popup-view-offline-order').bPopup().close();
+            selectRow(index-1);
+            cancelOfflineOrders([[index - 1]], table);
+        });
+    });
+    function doCompleteAction(table) {
+        if (!checkFree()) {
+            return;
+        }
+        var rows = table.rows('.selected').data();
+        if (window.isFreeVerion) {
+            var countFreeIncrease = rows.length;
+            if (window.currentOrderAmount + countFreeIncrease > window.maxOrderAmount) {
+                var num = window.maxOrderAmount - window.currentOrderAmount;
+                callFreeWarningMessageCount(num);
+                return false;
+            }
+        }
+        jQuery.each(rows, function (k, index) {
+            completeSingleOfflineOrder(index[0], table, 1);
+        });
+    }
+    function selectRow(index){
+        var rowQuery = '.offline_order_grid_table tbody input[type="checkbox"][pos="' + index + '"]';
+        var row = jQuery(rowQuery);
+        var isChecked = row.prop('checked');
+        if (!isChecked) {
+            row.trigger('click');
+        }
+    }
+</script>

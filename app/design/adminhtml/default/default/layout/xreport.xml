@@ -1,0 +1,692 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+
+
+    <xreport_view_index>
+        <reference name="root">
+            <remove name="head"/>
+            <remove name="header"/>
+            <remove name="menu"/>
+            <remove name="notifications"/>
+            <remove name="footer"/>
+            <block type="adminhtml/page_head" name="xreport.head" as="head" template="xreport/index/head.phtml">
+                <action method="addItem">
+                    <type>js_css</type>
+                    <name>calendar/calendar-win2k-1.css</name>
+                    <params/>
+                    <!--<if/><condition>can_load_calendar_js</condition>-->
+                </action>
+                <action method="addItem">
+                    <type>js</type>
+                    <name>calendar/calendar.js</name>
+                    <!--<params/><if/><condition>can_load_calendar_js</condition>-->
+                </action>
+                <action method="addItem">
+                    <type>js</type>
+                    <name>calendar/calendar-setup.js</name>
+                    <!--<params/><if/><condition>can_load_calendar_js</condition>-->
+                </action>
+
+                <!--DO: core-->
+
+                <!-- Bootstrap Core CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/bootstrap.min.css</name>
+                </action>
+                <!-- MetisMenu CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/metisMenu.min.css</name>
+                </action>
+                <!-- Timeline CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/timeline.css</name>
+                </action>
+                <!-- Custom CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/sb-admin-2.css</name>
+                </action>
+                <!-- Morris Charts CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/morris.css</name>
+                </action>
+                <!-- Custom Fonts -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/css/font-awesome.min.css</name>
+                </action>
+
+                <!--ANIMATE-->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/animate.min.css</name>
+                </action>
+
+                <!--DO: CORE JS-->
+                <!-- jQuery -->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/jquery/dist/jquery.min.js</name>
+                </action>
+                <!-- Bootstrap Core JavaScript -->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/bootstrap/dist/js/bootstrap.min.js</name>
+                </action>
+                <!-- Metis Menu Plugin JavaScript -->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/metisMenu/dist/metisMenu.min.js</name>
+                </action>
+
+
+                <!-- Morris Charts JavaScript -->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/raphael/raphael-min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/morrisjs/morris.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/morris-data.js</name>
+                </action>
+
+                <!--Dashboard js-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/angular/angular.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/report.js</name>
+                </action>
+                <!-- Custom Theme JavaScript -->
+                <action method="addJs">
+                    <name>sm/xreport/js/sb-admin-2.js</name>
+                </action>
+
+                <!--Angular - Chart-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/Chart.js/Chart.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/angular-chart.js/dist/angular-chart.min.js</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/angular-chart.min.css</name>
+                </action>
+
+                <!--Angular - Table-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/ng-table/dist/ng-table.min.js</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/ng-table.min.css</name>
+                </action>
+                <!--Custom JS-->
+                <action method="addCss">
+                    <name>sm/xreport/css/mainStyle.css</name>
+                </action>
+            </block>
+            <reference name="content">
+                <block type="xreport/adminhtml_xReportbackend" name="xreport" template="xreport/index/index.phtml">
+                    <block type="xreport/adminhtml_index_navigation" name="navigation" template="xreport/index/navigation.phtml">
+                        <block type="xreport/adminhtml_store_switcher" name="top_link" template="xreport/index/toplink.phtml"/>
+                        <block type="xreport/adminhtml_store_switcher" name="store_switcher" template="xreport/index/store/switcher.phtml"/>
+                    </block>
+                    <block type="xreport/adminhtml_dashboard_chart" name="sales_overview" template="xreport/index/dashboard/salesoverview.phtml"/>
+                    <block type="xreport/adminhtml_dashboard_chart" name="quantity_overview" template="xreport/index/dashboard/quantityoverview.phtml"/>
+                    <block type="xreport/adminhtml_dashboard_top" name="dashboad_top" template="xreport/index/dashboard/top.phtml"/>
+                </block>
+            </reference>
+        </reference>
+    </xreport_view_index>
+
+
+    <xreport_adminhtml_xreportcustomer_index>
+        <reference name="content">
+            <block type="xreport/adminhtml_xreportcustomer" name="xreportcustomer"/>
+        </reference>
+    </xreport_adminhtml_xreportcustomer_index>
+
+
+    <xreport_sales_viewhistory>
+        <reference name="root">
+            <remove name="head"/>
+            <remove name="header"/>
+            <remove name="menu"/>
+            <remove name="notifications"/>
+            <remove name="footer"/>
+            <block type="adminhtml/page_head" name="xreport.sales.head" as="head" template="xreport/index/head.phtml">
+                <!-- Bootstrap Core CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/bootstrap.min.css</name>
+                </action>
+                <!-- MetisMenu CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/metisMenu.min.css</name>
+                </action>
+                <!-- Timeline CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/timeline.css</name>
+                </action>
+                <!-- Custom CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/sb-admin-2.css</name>
+                </action>
+                <!-- Morris Charts CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/morris.css</name>
+                </action>
+                <!-- Custom Fonts -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/css/font-awesome.min.css</name>
+                </action>
+                <!--Custom CSS-->
+                <action method="addCss">
+                    <name>sm/xreport/css/mainStyle.css</name>
+                </action>
+
+                <!--DO: CORE JS-->
+                <!-- jQuery -->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/jquery/dist/jquery.min.js</name>
+                </action>
+                <!-- Bootstrap Core JavaScript -->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/bootstrap/dist/js/bootstrap.min.js</name>
+                </action>
+                <!-- Metis Menu Plugin JavaScript -->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/metisMenu/dist/metisMenu.min.js</name>
+                </action>
+
+
+                <!-- Morris Charts JavaScript -->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/raphael/raphael-min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/morrisjs/morris.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/morris-data.js</name>
+                </action>
+
+                <!--MAIN js-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/angular/angular.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/x-main.js</name>
+                </action>
+                <!-- Custom Theme JavaScript -->
+                <action method="addJs">
+                    <name>sm/xreport/js/sb-admin-2.js</name>
+                </action>
+
+                <!--Angular - Chart-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/Chart.js/Chart.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/angular-chart.js/dist/angular-chart.min.js</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/angular-chart.min.css</name>
+                </action>
+
+                <!--Angular bootstrap-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/angular-bootstrap/ui-bootstrap.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/modal.js</name>
+                </action>
+
+
+                <!--Angular - Table-->
+                <!--<action method="addJs">-->
+                <!--<name>sm/xreport/bower_components/ng-table/dist/ng-table.min.js</name>-->
+                <!--</action>-->
+                <!--<action method="addCss">-->
+                <!--<name>sm/xreport/plugin/ng-table.min.css</name>-->
+                <!--</action>-->
+
+                <!--Data Table-->
+                <!--<action method="addCss">-->
+                <!--<name>sm/xreport/plugin/jquery.dataTables.min.css</name>-->
+                <!--</action>-->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/dataTables.bootstrap.css</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/dataTables.responsive.css</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/bower_components/jquery-ui/themes/overcast/jquery-ui.min.css</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/dataTables.jqueryui.min.css</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/datatables/media/js/jquery.dataTables.min.js</name>
+                </action>
+                <!--<action method="addJs">-->
+                <!--<name>sm/xreport/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js</name>-->
+                <!--</action>-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/datatables/media/js/dataTables.jqueryui.min.js</name>
+                </action>
+                <!--<action method="addJs">-->
+                <!--<name>sm/xreport/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.responsive.js</name>-->
+                <!--</action>-->
+
+
+                <!--ANIMATE-->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/animate.min.css</name>
+                </action>
+
+                <!--Date range picker-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/moment/min/moment.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/bootstrap-daterangepicker/daterangepicker.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/angular-daterangepicker/js/angular-daterangepicker.min.js</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/bower_components/bootstrap-daterangepicker/daterangepicker.css</name>
+                </action>
+
+                <!--Tooltip-->
+                <action method="addJs">
+                    <name>sm/xreport/js/jquery.qtip.min.js</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/jquery.qtip.min.css</name>
+                </action>
+
+                <!--Custom JS-->
+                <action method="addJs">
+                    <name>sm/xreport/js/sales/history.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/directive/filter.js</name>
+                </action>
+
+                <!--Scroll to-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/jquery.scrollTo/jquery.scrollTo.min.js</name>
+                </action>
+
+                <!--bootstrap notify-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/remarkable-bootstrap-notify/dist/bootstrap-notify.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/notifyHelper.js</name>
+                </action>
+
+
+
+            </block>
+            <reference name="content">
+                <block type="xreport/adminhtml_xReportbackend" name="xreport.sales.history" template="xreport/index/sales/history/index.phtml">
+                    <block type="xreport/adminhtml_index_navigation" name="navigation" template="xreport/index/navigation.phtml">
+                        <block type="xreport/adminhtml_store_switcher" name="top_link" template="xreport/index/toplink.phtml"/>
+                        <block type="xreport/adminhtml_store_switcher" name="store_switcher" template="xreport/index/store/switcher.phtml"/>
+                    </block>
+                    <block type="xreport/adminhtml_sales_history_grid" name="xreport.sales.grid" template="xreport/index/sales/history/grid.phtml">
+                        <block type="xreport/adminhtml_modal" template="xreport/index/filterModal.phtml" name="xreport.filter.modal"/>
+                    </block>
+                </block>
+            </reference>
+        </reference>
+    </xreport_sales_viewhistory>
+
+    <xreport_sales_viewdetail>
+        <reference name="root">
+            <remove name="head"/>
+            <remove name="header"/>
+            <remove name="menu"/>
+            <remove name="notifications"/>
+            <remove name="footer"/>
+            <block type="adminhtml/page_head" name="xreport.sales.head" as="head" template="xreport/index/head.phtml">
+                <!-- Bootstrap Core CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/bootstrap.min.css</name>
+                </action>
+                <!-- MetisMenu CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/metisMenu.min.css</name>
+                </action>
+                <!-- Custom CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/sb-admin-2.css</name>
+                </action>
+                <!-- Morris Charts CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/morris.css</name>
+                </action>
+                <!-- Custom Fonts -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/css/font-awesome.min.css</name>
+                </action>
+                <!--Custom CSS-->
+                <action method="addCss">
+                    <name>sm/xreport/css/mainStyle.css</name>
+                </action>
+
+                <!--DO: CORE JS-->
+                <!-- jQuery -->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/jquery/dist/jquery.min.js</name>
+                </action>
+                <!-- Bootstrap Core JavaScript -->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/bootstrap/dist/js/bootstrap.min.js</name>
+                </action>
+                <!-- Metis Menu Plugin JavaScript -->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/metisMenu/dist/metisMenu.min.js</name>
+                </action>
+
+                <!--MAIN js-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/angular/angular.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/x-main.js</name>
+                </action>
+                <!-- Custom Theme JavaScript -->
+                <action method="addJs">
+                    <name>sm/xreport/js/sb-admin-2.js</name>
+                </action>
+
+                <!--Angular - Chart-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/Chart.js/Chart.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/angular-chart.js/dist/angular-chart.min.js</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/angular-chart.min.css</name>
+                </action>
+
+                <!--Angular bootstrap-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/angular-bootstrap/ui-bootstrap.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/modal.js</name>
+                </action>
+
+                <!--Data Table-->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/jquery.dataTables.min.css</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/dataTables.bootstrap.css</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/dataTables.responsive.css</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/bower_components/jquery-ui/themes/overcast/jquery-ui.min.css</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/dataTables.jqueryui.min.css</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/datatables/media/js/jquery.dataTables.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/datatables/media/js/dataTables.jqueryui.min.js</name>
+                </action>
+                <!--<action method="addJs">-->
+                <!--<name>sm/xreport/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.responsive.js</name>-->
+                <!--</action>-->
+
+
+                <!--ANIMATE-->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/animate.min.css</name>
+                </action>
+
+                <!--Date range picker-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/moment/min/moment.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/bootstrap-daterangepicker/daterangepicker.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/angular-daterangepicker/js/angular-daterangepicker.min.js</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/bower_components/bootstrap-daterangepicker/daterangepicker.css</name>
+                </action>
+
+                <!--Tooltip-->
+                <action method="addJs">
+                    <name>sm/xreport/js/jquery.qtip.min.js</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/jquery.qtip.min.css</name>
+                </action>
+
+                <!--Custom JS-->
+                <action method="addJs">
+                    <name>sm/xreport/js/sales/detail.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/directive/filter.js</name>
+                </action>
+
+                <!--iz Currency-->
+                <action method="addJs">
+                    <name>sm/xreport/js/izCurrency.js</name>
+                </action>
+
+                <!--Scroll to-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/jquery.scrollTo/jquery.scrollTo.min.js</name>
+                </action>
+
+                <!--bootstrap notify-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/remarkable-bootstrap-notify/dist/bootstrap-notify.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/notifyHelper.js</name>
+                </action>
+
+            </block>
+            <reference name="content">
+                <block type="xreport/adminhtml_xReportbackend" name="xreport.sales.detail" template="xreport/index/sales/detail/index.phtml">
+                    <block type="xreport/adminhtml_index_navigation" name="navigation" template="xreport/index/navigation.phtml">
+                        <block type="xreport/adminhtml_store_switcher" name="top_link" template="xreport/index/toplink.phtml"/>
+                        <block type="xreport/adminhtml_store_switcher" name="store_switcher" template="xreport/index/store/switcher.phtml"/>
+                    </block>
+                    <block type="xreport/adminhtml_sales_detail_grid" name="xreport.sales.grid" template="xreport/index/sales/detail/grid.phtml"/>
+                </block>
+            </reference>
+        </reference>
+    </xreport_sales_viewdetail>
+
+    <xreport_sales_viewinventory>
+        <reference name="root">
+            <remove name="head"/>
+            <remove name="header"/>
+            <remove name="menu"/>
+            <remove name="notifications"/>
+            <remove name="footer"/>
+            <block type="adminhtml/page_head" name="xreport.sales.head" as="head" template="xreport/index/head.phtml">
+                <!-- Bootstrap Core CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/bootstrap.min.css</name>
+                </action>
+                <!-- MetisMenu CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/metisMenu.min.css</name>
+                </action>
+                <!-- Custom CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/sb-admin-2.css</name>
+                </action>
+                <!-- Morris Charts CSS -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/morris.css</name>
+                </action>
+                <!-- Custom Fonts -->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/css/font-awesome.min.css</name>
+                </action>
+                <!--Custom CSS-->
+                <action method="addCss">
+                    <name>sm/xreport/css/mainStyle.css</name>
+                </action>
+
+                <!--DO: CORE JS-->
+                <!-- jQuery -->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/jquery/dist/jquery.min.js</name>
+                </action>
+                <!-- Bootstrap Core JavaScript -->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/bootstrap/dist/js/bootstrap.min.js</name>
+                </action>
+                <!-- Metis Menu Plugin JavaScript -->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/metisMenu/dist/metisMenu.min.js</name>
+                </action>
+
+                <!--MAIN js-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/angular/angular.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/x-main.js</name>
+                </action>
+                <!-- Custom Theme JavaScript -->
+                <action method="addJs">
+                    <name>sm/xreport/js/sb-admin-2.js</name>
+                </action>
+
+                <!--Angular - Chart-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/Chart.js/Chart.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/angular-chart.js/dist/angular-chart.min.js</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/angular-chart.min.css</name>
+                </action>
+
+                <!--Angular bootstrap-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/angular-bootstrap/ui-bootstrap.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/modal.js</name>
+                </action>
+
+                <!--Data Table-->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/jquery.dataTables.min.css</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/dataTables.bootstrap.css</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/dataTables.responsive.css</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/bower_components/jquery-ui/themes/overcast/jquery-ui.min.css</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/dataTables.jqueryui.min.css</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/datatables/media/js/jquery.dataTables.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/datatables/media/js/dataTables.jqueryui.min.js</name>
+                </action>
+                <!--<action method="addJs">-->
+                <!--<name>sm/xreport/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.responsive.js</name>-->
+                <!--</action>-->
+
+
+                <!--ANIMATE-->
+                <action method="addCss">
+                    <name>sm/xreport/plugin/animate.min.css</name>
+                </action>
+
+                <!--Date range picker-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/moment/min/moment.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/bootstrap-daterangepicker/daterangepicker.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/angular-daterangepicker/js/angular-daterangepicker.min.js</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/bower_components/bootstrap-daterangepicker/daterangepicker.css</name>
+                </action>
+
+                <!--Tooltip-->
+                <action method="addJs">
+                    <name>sm/xreport/js/jquery.qtip.min.js</name>
+                </action>
+                <action method="addCss">
+                    <name>sm/xreport/plugin/jquery.qtip.min.css</name>
+                </action>
+
+                <!--Custom JS-->
+                <action method="addJs">
+                    <name>sm/xreport/js/sales/inventory.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/directive/filter.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/izCurrency.js</name>
+                </action>
+
+                <!--Scroll to-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/jquery.scrollTo/jquery.scrollTo.min.js</name>
+                </action>
+                <!--<action method="addJs">-->
+                    <!--<name>sm/xreport/bower_components/jquery.nicescroll/dist/jquery.nicescroll.min.js</name>-->
+                <!--</action>-->
+
+                <!--bootstrap notify-->
+                <action method="addJs">
+                    <name>sm/xreport/bower_components/remarkable-bootstrap-notify/dist/bootstrap-notify.min.js</name>
+                </action>
+                <action method="addJs">
+                    <name>sm/xreport/js/notifyHelper.js</name>
+                </action>
+
+
+            </block>
+            <reference name="content">
+                <block type="xreport/adminhtml_xReportbackend" name="xreport.sales.inventory" template="xreport/index/sales/inventory/index.phtml">
+                    <block type="xreport/adminhtml_index_navigation" name="navigation" template="xreport/index/navigation.phtml">
+                        <block type="xreport/adminhtml_store_switcher" name="top_link" template="xreport/index/toplink.phtml"/>
+                        <block type="xreport/adminhtml_store_switcher" name="store_switcher" template="xreport/index/store/switcher.phtml"/>
+                    </block>
+                    <block type="xreport/adminhtml_sales_inventory_grid" name="xreport.sales.grid" template="xreport/index/sales/inventory/grid.phtml"/>
+                </block>
+            </reference>
+        </reference>
+    </xreport_sales_viewinventory>
+</layout>

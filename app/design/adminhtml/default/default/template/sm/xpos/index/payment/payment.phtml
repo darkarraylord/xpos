@@ -1,0 +1,298 @@
+<?php /* @var $this SM_XPos_Block_Adminhtml_Sales_Order_Create_Billing_Method_Form */ ?>
+<?php
+
+$isEnableSplitPayment = $this->isEnableSplitPayment();
+?>
+<script>
+    var flagClick = true;
+    function selectDivPayment(div) {
+        if (flagClick == true) {
+            var id = (jQuery(div).attr('id')).substr(9);
+            var fullId = '#' + id + '_title';
+            flagClick = false; //IMPORTANCE
+            var tempOnclick = jQuery(div).attr('onclick');
+            jQuery(div).removeAttr('onclick');
+            jQuery(fullId).click();
+            jQuery(div).attr('onclick', tempOnclick);
+        }
+        flagClick = true;
+    }
+    /*Split Payment*/
+    payment.setPriceSplitPayment = order.setPriceSplitPayment.bind(order);
+    jQuery(document).ready(function () {
+        jQuery(".amountSplit").keyup(function (e) {
+            // if press Enter -> will blur
+            if (e.keyCode == 13) {
+                jQuery(this).blur();
+                return
+            }
+            // Allow: backspace, delete, tab, escape, enter and .
+            if (jQuery.inArray(e.keyCode, [46, 8, 9, 27, 110, 190]) !== -1 ||
+                    // Allow: Ctrl+A, Command+A
+                (e.keyCode == 65 && ( e.ctrlKey === true || e.metaKey === true ) ) ||
+                    // Allow: home, end, left, right, down, up
+                (e.keyCode >= 35 && e.keyCode <= 40)) {
+                // let it happen, don't do anything
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105) || e.keyCode == 190) {
+                e.preventDefault();
+            }else{
+                if(jQuery(this).is(':focus') && jQuery(this).val() == ''){
+                    return;
+                }
+                jQuery("#cash-in").val(getSplitAmount());
+                updateBalanceFromTendered();
+            }
+        }).blur(function () {
+            var method = jQuery(this).attr('methodCode');
+            var methodInput = '#' + method + '_input_price';
+            /*end check  =0*/
+
+            var value = jQuery(this).val();
+            if (!isNumber(value)) {
+                jQuery(this).val(0).focus();
+            }
+            /*check curent input =0*/
+            var numOfSelected = 0;
+            var xt = window.splitPaymentCheck.grandTotal(this);
+            if (parseFloat(value) <= 0) {
+//                jQuery(".payment-method-item").each(function () {
+//                    if (jQuery(this).hasClass('active')) {
+//                        numOfSelected += 1;
+//                    }
+//                });
+//                if (numOfSelected >= 3 || xt) {
+////                    alert('Please enter a number greater than 0');
+//                    /*just remove curent method*/
+//                    jQuery("#p_method_" + method).removeClass('active');
+//
+//                    jQuery(this).prop('disabled', false).val(0);
+//                } else {
+//                    if (defineTypePaymentMethod() == 3) {
+                jQuery(methodInput).val(0).focus();
+//                    }
+//                }
+            }
+
+            iLog('Blur Input with xt', xt);
+
+            var code = jQuery(this).attr('methodCode');
+            payment.switchMethod(code);
+//        }
+    })
+    })
+    ;
+
+
+    /*can't check out when: canCheckOutWithSplitPayment == false && jQuery('#is_split_payment_method_hidden').val() == '1' */
+    var totalAmountSplitPayment = [];
+
+    function changeAmountSplitPayment(code) {
+        var methodInput = '#' + code + '_input_price';
+        var methodPrice = '#' + code + '_price';
+        var value = jQuery(methodInput).val();
+        jQuery('.amountSplit').hide(200);
+        jQuery(methodPrice).html(formatCurrency(value, window.multiStoreView.priceFormat));
+    }
+
+    /*----end Split payment*/
+</script>
+<?php
+if (SM_XPos_Adminhtml_XposController::$_callFromControllerXpos == false) {
+    return;
+}
+?>
+<script>
+    var arrSplitPayment = [];
+    window.arrSplitPayment = arrSplitPayment;
+    var isEnableSpitPayment = '<?php echo $isEnableSplitPayment==true ? "1" : "0" ?>';
+    window.isEnableSpitPayment = isEnableSpitPayment;
+    <?php
+    /*Payment allow split*/
+      /*Split Payment*/
+    /*Enable Split payment*/
+    $paymentSplits = $this->getPaymentAllowSplit();
+    foreach($paymentSplits as $k=>$v){
+    echo 'window.arrSplitPayment.push("'.$v.'");';
+    }
+     ?>
+</script>
+<?php
+
+?>
+
+<?php
+$flagSetPaymentMethodCcSave = false;
+if ($this->hasMethods()) {
+    $defaultMethod = 'NOT_SELECTED_METHOD';
+    $defaultSettingMethod = Mage::helper('xpos/configXPOS')->getDefaultPayment();
+    $currentQuote = 'NOT_QUOTE';
+    if ($currentQuote = $this->getQuote()) {
+        $currentQuote = 'QUOTE';
+    };
+    if (
+        !$this->getSelectedMethodCode()
+        || $this->getSelectedMethodCode() == 'xpaymentMultiple'
+        || $this->getSelectedMethodCode() == 'free'
+    ) {
+        $defaultMethod = $defaultSettingMethod;
+        if ($defaultMethod || array_key_exists($defaultMethod, $this->getMethods())) {
+            $this->getQuote()->getPayment()->setMethod($defaultMethod);
+        } else {
+            $defaultMethod = current(array_keys($this->getMethods()));
+            $this->getQuote()->getPayment()->setMethod($defaultMethod);
+
+        }
+    }
+    $method = $this->getSelectedMethodCode();
+    if (in_array($method, array('ccsave', 'authorizenet', 'purchaseorder'))) {
+        $flagSetPaymentMethodCcSave = true;
+    }
+    $paymemt_title = 'No Payment';
+    if ($method != 'free' && !!$method) {
+        $paymemt_title = Mage::getStoreConfig('payment/' . $method . '/title', Mage::helper('xpos/product')->getCurrentSessionStoreId());
+    }
+
+
+    ?>
+    <script>
+        var defaultMethod = '<?php echo $defaultMethod; ?>';
+        var defaultSettingMethod = '<?php echo $defaultSettingMethod; ?>';
+        var paymentMethodSelected = '<?php echo $this->getSelectedMethodCode() ?>';
+        var currentQuote = '<?php echo $currentQuote ?>';
+        var currentPaymenttSet = '<?php echo $paymemt_title; ?>';
+        jQuery('#payment_detail').html(currentPaymenttSet);
+    </script>
+
+
+    <?php
+    function selectonSrotAscending($arr)
+    {
+        $numOfArr = count($arr);
+        for ($i = 0; $i < $numOfArr - 1; $i++) {
+            $min = $i;
+            for ($j = $i + 1; $j < $numOfArr; $j++) {
+                if ($arr[$i]['_data']['sort_order'] > $arr[$j]['_data']['sort_order']) {
+                    $min = $j;
+                }
+            }
+            $temp = $arr[$min];
+            $arr[$min] = $arr[$i];
+            $arr[$i] = $temp;
+        }
+
+        return $arr;
+    }
+
+    ?>
+    <link async href="http://fonts.googleapis.com/css?family=Coda" data-generated="http://enjoycss.com"
+          rel="stylesheet"
+          type="text/css"/>
+    <div id="order-billing_method_form" name="order-billing_method_form">
+        <div class="payment-methods">
+            <input id="is_split_payment_method_hidden" name="payment[splitPayment][enable]" type="hidden"
+                   value="0"/>
+            <?php
+            $_methods = $this->getMethods();
+            $_methods = selectonSrotAscending($_methods);
+            $_methodsCount = count($_methods);
+            $_counter = 0;
+            $arrayNotShow = array('xpayment_izettlepayment','xpayment_stripepayment', 'xpayment_paypalpayment', 'xpayment_bluepaypayment', 'xpayment_authorizepayment');
+            ?>
+            <?php foreach ($_methods as $_method) {
+                $_code = $_method->getCode();
+                if($_code == 'xpayment_discount')
+                    continue;
+                if ($_code == 'xpaymentMultiple') continue;
+                $_counter++; ?>
+                <?php if ($_methodsCount >= 1) { ?>
+                    <?php if(!in_array($_code, $arrayNotShow)){ ?>
+                        <div id="p_method_<?php echo $_code ?>"
+                        class="d_payment payment-method-item checkout-item <?php
+                        $currentActivePaymentMethod = '';
+                        if ($this->getSelectedMethodCode() == $_code) {
+                            $currentActivePaymentMethod = $_method->getTitle();
+                            echo "active";
+                        } ?>" onclick="selectDivPayment(this); updateBalance();">
+                        <span
+                            onclick="(function() {
+                                setSelectedPayment('<?php echo $_code ?>');
+                                flagClick = false;
+                                })();
+                                payment.switchMethod('<?php echo $_code ?>');
+                                clearInput();
+                                select_payment_method('<?php echo $_code ?>');"
+                            id="<?php echo $_code ?>_title"
+                            title="<?php echo $this->htmlEscape($_method->getTitle()) ?>">
+                            <?php echo $this->htmlEscape($_method->getTitle()) ?>
+                            <price id="<?php echo $_code ?>_price" class="splitPrice" style=""></price>
+                        </span>
+                        <?php if (in_array($_code, $paymentSplits) && $isEnableSplitPayment) { ?>
+                            <input onclick="(function() {
+                                flagClick = false;
+                                })();" id="<?php echo $_code ?>_input_price"
+                                   name="payment[splitPayment][<?php echo $_code ?>]"
+                                   methodCode="<?php echo $_code ?>"
+                                   class="amountSplit splitPayment-css" width="15" type="number"
+                                   style="width: 200px;display: none;font-size: 22px;font-weight: 600; overflow: hidden;padding: 0 30px; text-overflow: ellipsis;white-space: nowrap;"
+                                   value="0" onchange="payment.setPriceSplitPayment('<?php echo $_code ?>')"
+                                   min="0">
+                        <?php } ?>
+                    <?php }
+                } else { ?>
+                    <span>
+                            <?php echo $this->__("No Payment Methods") ?>
+                        </span>
+                <?php } ?>
+                </div>
+                <?php if ($_code == 'ccsave') { ?>
+                    <div class="ccsave-block" style="display: none;">
+                        <?php echo $this->getChild('payment.method.' . $_code)->setTemplate('sm/xpos/index/payment/ccsave.phtml')->toHtml() ?>
+                    </div>
+                <?php } else {
+                    if ($_code != 'checkmo') { ?>
+                        <?php echo($resullt = $this->getChildHtml('payment.method.' . $_code)); ?>
+                    <?php }
+                } ?>
+            <?php } ?>
+        </div>
+        <div id="payment_method_validate"></div>
+        <input id="payment_method_hidden" name="payment[method]" type="hidden"/>
+    </div>
+
+    <script type="text/javascript">
+        function updatePaymentMethod() {
+            var activePaymentMethod = '<?php echo $currentActivePaymentMethod; ?>';
+            iLog('Current Active Payment Method', activePaymentMethod);
+            if (activePaymentMethod != '') {
+                jQuery("#payment_detail").html(activePaymentMethod);
+            }
+        }
+
+        jQuery(document).ready(function () {
+            updatePaymentMethod();
+            jQuery("#payment_method_hidden").val('<?php echo Mage::helper('xpos/configXPOS')->getDefaultPayment()?>');
+            jQuery("#payment_method_hidden").removeAttr('disabled');
+        });
+
+
+    </script>
+<?php } else { ?>
+    <?php echo $this->__("No Payment Methods") ?>
+<?php } ?>
+<script type="text/javascript">
+    window.CURRENT_PAYMENT = undefined;
+    function showPaymentBlock() {
+        var titleMethod = '#' + '<?php echo $method ?>' + '_title';
+            jQuery(titleMethod).click();
+    }
+
+    /*
+    * XPOS-2453
+    * */
+    jQuery(document).ready(function () {
+        showPaymentBlock();
+    });
+</script>

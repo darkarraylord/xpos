@@ -1,0 +1,35 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: sonbv
+ * Date: 28/08/2015
+ * Time: 15:58
+ */
+/*************
+ * @var $this SM_XPos_Block_Adminhtml_Sales_Order_View_Info_Refund
+ *
+ * */
+?>
+<?php if ($this->hasInvoiceToRefund()): ?>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-products">Invoice Refund</h4>
+    </div>
+</div>
+<div class="refund-online">
+    <ul class="refund-online-list">
+        <?php foreach($this->getOrder()->getInvoiceCollection() as $_invoice): ?>
+        <?php /** @var $_invoice Mage_Sales_Model_Order_Invoice */ ?>
+        <?php if ($this->canRefund($_invoice)): ?>
+                <li class="refund-online-item form-buttons">
+                    <button onclick="onInvoiceCreditMemo(<?php echo "{$this->getOrder()->getId()}, {$_invoice->getId()}"; ?>); return false;" class="refund-online-button fancy-button">Refund</button>
+                    Invoice increment ID:
+                    <?php echo $_invoice->getIncrementId(); ?>
+            </li>
+        <?php endif; ?>
+        <?php endforeach; ?>
+        <?php ?>
+    </ul>
+</div>
+<?php endif; ?>
+

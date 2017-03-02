@@ -1,0 +1,100 @@
+<script>
+    jQuery(document).ready(function () {
+        var ccS = $.jStorage.get('enable_status',null);
+        if (ccS == '1') {
+            jQuery('#toggleCcs').css('border-color', 'red');
+        } else {
+            jQuery('#toggleCcs').css('border-color', 'black');
+        }
+    });
+
+    function changeStatusMess(){
+        var ccS = $.jStorage.get('enable_status');
+        if( ccS== '1'){
+            iLog('>>>>>Disable xpos message');
+            $.jStorage.set('enable_status','0');
+            jQuery('#toggleCcs').css('border-color', 'black');
+            setStatusXposWorking('change_s');
+        }else{
+            iLog('>>>>>Enable xpos message');
+            $.jStorage.set('enable_status','1');
+            setStatusXposWorking('change_s');
+            jQuery('#toggleCcs').css('border-color', 'red');
+        }
+    }
+</script>
+<div class="main-content">
+    <div id="footer_left">
+        <span id="network-availability" class="network-online" onclick="toggleOfflineMode()"><input type="hidden" id="network-status" value="online"></span>
+        <span id="network-status-label">Online</span>
+        | <span id="cashier_name"><?php echo Mage::getSingleton('admin/session')->getUser()->getName(); ?></span>
+        | <span id="store-name"><?php echo Mage::app()->getStore()->getName(); ?></span>
+        <?php if (Mage::helper('xpos/configXPOS')->getEnableTill() == 1) { ?> | <?php echo $this->__("Till") ?> <span
+            id="till_name"><?php echo $this->__("Default") ?></span><?php } ?>
+        <?php if (Mage::helper('xpos')->isWarehouseIntegrate() == 1 || true) { ?> | <span
+            id="store_name"><?php echo $this->__("Default") ?></span><?php } ?>
+        <?php if (Mage::helper('xpos')->isWarehouseIntegrate() == 1) { ?>
+            | <span id="warehouse_name"><?php echo $this->__("Default") ?></span><?php } ?>
+        | <?php echo $this->__("Quote") ?> <?php echo Mage::getSingleton('adminhtml/sales_order_create')->getQuote()->getId(); ?>
+        <span id="customers-status"></span>
+        <span id="status"></span>
+        <span id="xpos-status" style="color: #00aa00"></span>
+        <span id="spinner-loading" class="spinner" style="display:none;">
+            <img id="img-spinner" src="<?php
+            echo $spiner_url = $this->getSkinUrl('sm/xpos/images/ajax-loader_small.gif');
+            ?>" alt="Loading"/>
+        </span>
+    </div>
+    <div id="footer_center" style="margin-left: 20px;float:left">
+
+    </div>
+    <div id="footer_right">
+        <?php echo date("d/m/Y", time()); ?> - <span
+            id="time-live"><?php echo date('g:i', time()); ?></span> <span id="day-time"><?php echo date('A', time()); ?></span>
+        <input id="toggleCcs" type="button" value="?" onclick="changeStatusMess();" style="width: 5px;height: 10px">
+    </div>
+    <div id="xpos-backend-settings">
+        <input id="xpos_receipt_font_type" type="hidden" name="xpos_receipt_font_type" value="<?php echo Mage::getStoreConfig('xpos/receipt/font_type'); ?>" />
+        <input id="xpos_receipt_logo_image_file" type="hidden" name="xpos_receipt_logo_image_file" value="<?php echo (Mage::getStoreConfig('xpos/receipt/logo_image_file') == '') ? '' : Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA) .'receipt/'. Mage::getStoreConfig('xpos/receipt/logo_image_file'); ?>" />
+        <input id="xpos_receipt_logo_literal" type="hidden" name="xpos_receipt_logo_literal" value="<?php echo Mage::getStoreConfig('xpos/receipt/logo_literal'); ?>" />
+        <input id="xpos_receipt_day_format" type="hidden" name="xpos_receipt_day_format" value="<?php echo Mage::getStoreConfig('xpos/receipt/day_format'); ?>" />
+        <input id="xpos_receipt_slogan_literal" type="hidden" name="xpos_receipt_slogan_literal" value="<?php echo Mage::getStoreConfig('xpos/receipt/slogan_literal'); ?>" />
+        <input id="xpos_receipt_fore_message" type="hidden" name="xpos_receipt_fore_message" value="<?php echo Mage::getStoreConfig('xpos/receipt/fore_message'); ?>" />
+        <input id="xpos_receipt_addition_fields_to_display" type="hidden" name="xpos_receipt_addition_fields_to_display" value="<?php echo Mage::getStoreConfig('xpos/receipt/addition_fields_to_display'); ?>" />
+        <input id="xpos_receipt_info_separator" type="hidden" name="xpos_receipt_info_separator" value="<?php echo Mage::getStoreConfig('xpos/receipt/info_separator'); ?>" />
+        <input id="xpos_receipt_logo_html_alignment" type="hidden" name="xpos_receipt_logo_html_alignment" value="<?php echo Mage::getStoreConfig('xpos/receipt/logo_html_alignment'); ?>" />
+        <input id="xpos_receipt_store_info_html_alignment" type="hidden" name="xpos_receipt_store_info_html_alignment" value="<?php echo Mage::getStoreConfig('xpos/receipt/store_info_html_alignment'); ?>" />
+        <input id="xpos_receipt_methods_html_alignment" type="hidden" name="xpos_receipt_methods_html_alignment" value="<?php echo Mage::getStoreConfig('xpos/receipt/methods_html_alignment'); ?>" />
+        <input id="tax_sales_display_price" type="hidden" name="tax_sales_display_price" value="<?php echo Mage::getStoreConfig('tax/sales_display/price'); ?>" />
+        <input id="tax_sales_display_subtotal" type="hidden" name="tax_sales_display_subtotal" value="<?php echo Mage::getStoreConfig('tax/sales_display/subtotal'); ?>" />
+    </div>
+</div>
+
+<script>
+    jQuery( document ).ready(function() {
+        startTime();
+    });
+
+    function startTime() {
+        var today = new Date();
+        var h = today.getHours();
+        var m = today.getMinutes();
+        var s = today.getSeconds();
+
+        var ampm = h >= 12 ? 'PM' : 'AM';
+        jQuery('#day-time').html(ampm);
+
+        h = h % 12;
+        h = h ? h : 12; // the hour '0' should be '12'
+        m = m < 10 ? '0' + m : m;
+
+        jQuery('#time-live').html(h + ":" + m);
+        t = setTimeout(function () {
+            startTime()
+        }, 500);
+
+    }
+
+    flag_reload_page = 1;
+
+</script>
